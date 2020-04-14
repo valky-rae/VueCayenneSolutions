@@ -1,15 +1,25 @@
 <template>
   <div id="app">
-    <div>
-    <router-link to="/about"> About |</router-link>
-    <router-link to="/canvas"> Canvas |</router-link>
-    <router-link to="/converter"> Converter </router-link>
-    </div>
+    <Slide class="nav">
+      <font-awesome-icon icon="user-secret" />
+      <router-link class="nav" to="/about"> About</router-link>
+      <router-link class="nav" to="/canvas"> Canvas</router-link>
+      <router-link class="nav" to="/converter"> Converter</router-link>
+    </Slide>
     <!-- <img src="./assets/logo.png"> -->
-
     <router-view/>
   </div>
 </template>
+
+<script>
+import { Slide } from 'vue-burger-menu'
+
+export default {
+  components: {
+    Slide
+  }
+}
+</script>
 
 <style>
 #app {
@@ -20,4 +30,15 @@
   color: #2c3e50;
   margin-top: 60px;
 }
+.nav {
+  padding: 10px;
+  font-size: 25px;
+  font-weight: bold;
+  color: white;
+}
+a {
+    font-weight: bold;
+    color: #2c3e50;
+    text-decoration:  none;
+  }
 </style>
