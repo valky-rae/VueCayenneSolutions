@@ -1,10 +1,19 @@
 <template>
   <div id="app">
     <Slide class="nav">
-      <font-awesome-icon icon="user-secret" />
+    <font-awesome-icon class="nav" icon="home" />
+    <span>
+      <font-awesome-icon class="nav" icon="info-circle"/>
       <router-link class="nav" to="/about"> About</router-link>
+    </span>
+    <span>
+      <font-awesome-icon class="nav" icon="pencil-alt" />
       <router-link class="nav" to="/canvas"> Canvas</router-link>
+    </span>
+    <span>
+      <font-awesome-icon class="nav" icon="arrow-alt-circle-right" />
       <router-link class="nav" to="/converter"> Converter</router-link>
+    </span>
     </Slide>
     <!-- <img src="./assets/logo.png"> -->
     <router-view/>
@@ -40,5 +49,10 @@ a {
     font-weight: bold;
     color: #2c3e50;
     text-decoration:  none;
+    padding-top: 50px;
+    text-align: bottom;
   }
+svg{
+  padding-bottom: 100px;
+}
 </style>
