@@ -1,15 +1,15 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
+    <div>
+    <router-link to="/about"> About |</router-link>
+    <router-link to="/canvas"> Canvas |</router-link>
+    <router-link to="/converter"> Converter </router-link>
+    </div>
+    <!-- <img src="./assets/logo.png"> -->
+
     <router-view/>
   </div>
 </template>
-
-<script>
-export default {
-  name: 'App'
-}
-</script>
 
 <style>
 #app {
