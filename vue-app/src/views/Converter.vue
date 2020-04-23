@@ -18,14 +18,14 @@
     </div>
 </template>
 <script>
-import * as d3 from 'd3'
+import * as d3Graphviz from 'd3-graphviz'
+// import * as d3 from 'd3-graphviz'
 export default {
   data: function () {
     return {
-      regex: 'empty regex',
+      regex: '101',
       fsm: 'empty fsm',
-      dotscriptcode: 'empty ds',
-      test: 'test'
+      dotscript: 'empty ds'
     }
   },
   methods: {
@@ -42,9 +42,7 @@ export default {
       console.log(this.regex)
       console.log(this.fsm)
       console.log(this.dotscript)
-      //   let d3 = require('d3')
-      d3.select('#graph').graphviz()
-        .renderDot(this.dotscript)
+      d3Graphviz.graphviz('#graph').renderDot(this.dotscript)
     }
   }
 }
