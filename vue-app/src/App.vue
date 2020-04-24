@@ -32,7 +32,7 @@ export default {
 
 <style>
 #app {
-  font-family: 'PT Mono', sans-serif;
+  font-family: 'Cinzel Decorative', cursive;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;

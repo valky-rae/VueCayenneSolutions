@@ -1,6 +1,8 @@
 <template>
     <div>
-        <h1> Cayenne Converter </h1>
+        <div class="typewriter">
+            <h1>Cayenne Converter </h1>
+        </div>
         <div>
             <form class="form-group">
                 <input class="form-control " type="text" v-model="regex">
@@ -54,6 +56,7 @@ export default {
 <style scoped>
 
 .form-control {
+    margin-top: 40px;
     display: block;
     width: 200px;
     padding: 6px 12px;
@@ -70,12 +73,13 @@ export default {
     font-size: 0.9em;
     text-align: left;
     text-shadow: 2px 2px black;
+    font-family: 'PT Mono';
 }
 .prettygraph{
     display: block;
     height: 400px;
     width: 100%;
-    background-color: pink;
+    background-color: black;
     border: 2px solid aliceblue;
     border-radius: 5px;
     margin-top: 2%;
@@ -94,5 +98,23 @@ button {
 button:hover {
     background-color: white;
     color: black;
+}
+/* DEMO-SPECIFIC STYLES */
+.typewriter h1 {
+  color: #fff;
+  font-size: 50px;
+  overflow: hidden; /* Ensures the content is not revealed until the animation */
+  border-right: .15em solid dodgerblue; /* The typwriter cursor */
+  white-space: nowrap; /* Keeps the content on a single line */
+  margin: 0 auto; /* Gives that scrolling effect as the typing happens */
+  letter-spacing: .1em; /* Adjust as needed */
+  animation:
+    typing 3.5s steps(30, end),
+    blink-caret .5s step-end;
+}
+/* The typing effect */
+@keyframes typing {
+  from { width: 0 }
+  to { width: 100% }
 }
 </style>
