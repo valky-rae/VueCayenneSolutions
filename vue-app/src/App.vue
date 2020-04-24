@@ -36,8 +36,9 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  margin-top: 60px;
   color: white;
+  margin-left: 5%;
+  margin-right: 5%;
 }
 .nav {
   padding: 10px;

@@ -2,7 +2,10 @@
     <div>
         <h1> Cayenne Converter </h1>
         <div>
-            <input type="text" v-model="regex">
+            <form class="form-group">
+                <input class="form-control " type="text" v-model="regex">
+                <p class="hint"> Enter Regex Here</p>
+            </form>
             <p>Message is: {{ regex }}</p>
             <div>
                 <button v-on:click="simple()"> Simple Display </button>
@@ -14,7 +17,7 @@
                 <button onclick="singletransitions();"> One by one</button> -->
             </div>
         </div>
-        <div id="graph" style="text-align: center;"></div>
+        <div id="graph" class="prettygraph" style="text-align: center;"></div>
     </div>
 </template>
 <script>
@@ -47,3 +50,49 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+
+.form-control {
+    display: block;
+    width: 200px;
+    padding: 6px 12px;
+    color: white;
+    border: 2px solid aliceblue;
+    border-radius: 5px;
+    background-color: transparent;
+    font-size: 1.2em;
+    line-height: 1.2em;
+    box-shadow: 2px 2px white;
+    /* cursor: not-allowed; */
+}
+.hint{
+    font-size: 0.9em;
+    text-align: left;
+    text-shadow: 2px 2px black;
+}
+.prettygraph{
+    display: block;
+    height: 400px;
+    width: 100%;
+    background-color: pink;
+    border: 2px solid aliceblue;
+    border-radius: 5px;
+    margin-top: 2%;
+}
+button {
+    background-color: black;
+    color: white;
+    border: 0;
+    border-radius: 20px;
+    cursor: pointer;
+    box-shadow: 2px 2px white;
+    padding: 10px 15px 10px 15px;
+    font-size: 20px;
+    font-family: 'PT Mono';
+}
+button:hover {
+    background-color: white;
+    color: black;
+}
+</style>
