@@ -27,7 +27,7 @@ import Login from '../src/views/Login'
 
 export default {
   components: {
-    Slide,Login
+    Slide, Login
   }
 }
 </script>
