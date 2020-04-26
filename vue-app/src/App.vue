@@ -16,16 +16,18 @@
     </span>
     </Slide>
     <!-- <img src="./assets/logo.png"> -->
+    <Login></Login>
     <router-view/>
   </div>
 </template>
 
 <script>
 import { Slide } from 'vue-burger-menu'
+import Login from '../src/views/Login'
 
 export default {
   components: {
-    Slide
+    Slide,Login
   }
 }
 </script>
