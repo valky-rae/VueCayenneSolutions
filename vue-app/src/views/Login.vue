@@ -17,22 +17,22 @@ export default {
     }
   },
   methods: {
-      onSignIn: function (googleUser) {   //automatically sign in
-      var profile  = googleUser.getBasicProfile()
+    onSignIn: function (googleUser) { // automatically sign in
+      var profile = googleUser.getBasicProfile()
       console.log('user is' + JSON.stringify(profile))
       var element = document.querySelector('#content')
-      element.innerText = profile.getEmail();
+      element.innerText = profile.getEmail()
       var image = document.createElement('img')
       image.setAttribute('src', profile.getImageUrl())
       element.append(image)
     },
     signOut: function () {
-      gapi.auth2.getAuthInstance().signOut().then(function() {
-      console.log('user signed out');
-      var element = document.querySelector('#content')
-      element.innerText = "User signed out";
-        })
-      }
+      gapi.auth2.getAuthInstance().signOut().then(function () { // eslint-disable-line
+        console.log('user signed out')
+        var element = document.querySelector('#content')
+        element.innerText = 'User signed out'
+      })
+    }
   }
 }
 </script>

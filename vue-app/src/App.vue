@@ -58,7 +58,7 @@ svg{
   padding-bottom: 100px;
 }
 .bm-menu {
-  height: 100%; 
+  height: 100%;
   width: 0;
   position: fixed; /* Stay in place */
   z-index: 1000; /* Stay on top */
