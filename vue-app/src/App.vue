@@ -1,19 +1,18 @@
 <template>
   <div id="app">
     <Slide noOverlay class="nav">
-    <font-awesome-icon class="nav" icon="home" />
-    <span>
-      <font-awesome-icon class="nav" icon="info-circle"/>
-      <router-link class="nav" to="/about"> About</router-link>
-    </span>
-    <span>
-      <font-awesome-icon class="nav" icon="pencil-alt" />
-      <router-link class="nav" to="/canvas"> Canvas</router-link>
-    </span>
-    <span>
-      <font-awesome-icon class="nav" icon="arrow-alt-circle-right" />
-      <router-link class="nav" to="/converter"> Converter</router-link>
-    </span>
+      <span>
+        <font-awesome-icon class="icons" icon="circle-notch"/>
+        <router-link class="nav" to="/about"> About</router-link>
+      </span>
+      <span>
+        <font-awesome-icon class="icons" icon="circle-notch"/>
+        <router-link class="nav" to="/canvas"> Canvas</router-link>
+      </span>
+      <span>
+        <font-awesome-icon class="icons" icon="circle-notch"/>
+        <router-link class="nav" to="/converter"> Converter</router-link>
+      </span>
     </Slide>
     <!-- <img src="./assets/logo.png"> -->
     <router-view/>
@@ -32,29 +31,39 @@ export default {
 
 <style>
 #app {
-  font-family: 'Cinzel Decorative', cursive;
+  /* font-family: 'Cinzel Decorative', cursive; */
+  /* font-family: 'Poppins', sans-serif; */
+  /* font-family: 'Comfortaa', cursive; */
+  font-family: 'Lora', serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: white;
-  margin-left: 5%;
-  margin-right: 5%;
+  color: black;
+  margin-left: 10%;
+  margin-right: 10%;
+  /* background-repeat: no-repeat; */
+  /* background-image: url("https://image.freepik.com/free-vector/black-background-with-gradient-neon-glitter-geometric-shape_8306-301.jpg"); */
+  /* background-image: url("https://wallpapersmug.com/download/3840x2400/95afc8/dark-night-river-forest-minimal-art.jpg"); */
+  /* background-position: cover; */
 }
 .nav {
-  padding: 10px;
+  text-align: center;
+  padding: 7px;
   font-size: 25px;
   font-weight: bold;
-  color: white;
+  color: #36648B;
+  /* text-shadow: 1px 1px white; */
+}
+.icons{
+  color: #36648B;
+  padding-top: 12px;
+  font-size: 20px;
+  text-shadow: 2px 2px white;
 }
 a {
     font-weight: bold;
     text-decoration:  none;
-    padding-top: 50px;
-    text-align: bottom;
   }
-svg{
-  padding-bottom: 100px;
-}
 .bm-menu {
   height: 100%; /* 100% Full-height */
   width: 0; /* 0 width - change this with JavaScript */
@@ -62,12 +71,13 @@ svg{
   z-index: 1000; /* Stay on top */
   top: 0;
   left: 0;
-  background-color: black; /* Black*/
+  background-color: white; /* Black*/
   overflow-x: hidden; /* Disable horizontal scroll */
   padding-top: 60px; /* Place content 60px from the top */
   transition: 0.5s; /*0.5 second transition effect to slide in the sidenav*/
 }
 .bm-burger-bars {
-  background-color: white;
+  /* background-color: #9FB6CD; */
+  background-color: #36648B;
 }
 </style>
