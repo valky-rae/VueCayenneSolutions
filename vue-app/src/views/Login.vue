@@ -1,6 +1,6 @@
 <template>
-    <div>
-        <h1>Google Authentication Website Application Demo</h1>
+    <div id="happy">
+        <h1 class="mouse" >Google Authentication Website Application Demo</h1>
         <div class="g-signin2" data-onsuccess="onSignIn"></div>
         <div id="content"></div>
         <p style="line-height: 30px; width: 300px; border: 1px solid black;"></p>
@@ -36,3 +36,14 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.mouse {
+  /* cursor: wait; */
+  /* cursor: url('http://i.stack.imgur.com/qdR8p.png'), auto; */
+  cursor: url('')
+}
+ #happy {
+  cursor: url("/uploads/media/default/0001/02/ee4486d1b3fc998e444c3b0100c73db282760eb5.png"), auto;
+}
+</style>
