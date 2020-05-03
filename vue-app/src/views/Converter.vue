@@ -40,7 +40,9 @@ export default {
       let parser = new regParser.RegParser(this.regex)
       this.fsm = parser.parseToDFA()
       this.dotscript = this.fsm.toDotScript()
-      d3Graphviz.graphviz('#graph').renderDot(this.defineMyDotscipt())
+      this.myDotscript = this.defineMyDotscipt()
+      console.log(this.myDotscript)
+      d3Graphviz.graphviz('#graph').renderDot(this.myDotscript)
     },
     defineNodes: function () {
       let nodes = 'digraph finite_state_machine {\n    rankdir = LR;'
@@ -69,8 +71,7 @@ export default {
     },
     defineMyDotscipt: function () {
       this.myDotscript = this.defineNodes() + this.defineTransitions() + '\n}'
-      console.log('MYYYYYYYYYYYYYYYYYYYYYYYYY')
-      console.log(this.myDotscript)
+      return this.myDotscript
     }
   }
 }
