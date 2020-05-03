@@ -26,27 +26,51 @@ export default {
     return {
       regex: '101',
       fsm: 'empty fsm',
-      dotscript: 'empty ds'
+      dotscript: 'empty ds',
+      myDotscript: ''
+
     }
   },
   components: {
     Carousel
   },
   methods: {
-    simple: function () {
-      console.log('DISPLAY FUCNTION')
-      console.log(this.regex + this.dotscript)
-    },
     convert: function () {
-      console.log('CONVERT TO DOTSCRIPT FUNCTION>>>>>>>>>>>>')
       let regParser = require('automata.js')
       let parser = new regParser.RegParser(this.regex)
       this.fsm = parser.parseToDFA()
       this.dotscript = this.fsm.toDotScript()
-      console.log(this.regex)
-      console.log(this.fsm)
-      console.log(this.dotscript)
-      d3Graphviz.graphviz('#graph').renderDot(this.dotscript)
+      d3Graphviz.graphviz('#graph').renderDot(this.defineMyDotscipt())
+    },
+    defineNodes: function () {
+      let nodes = 'digraph finite_state_machine {\n    rankdir = LR;'
+      for (var x = 0; x < this.fsm.numOfStates; x++) {
+        if (this.fsm.acceptStates.includes(x.toString())) {
+          nodes = nodes.concat('\n    node [shape=doublecircle color=black];' + x + ';')
+        } else {
+          nodes = nodes.concat('\n    node [shape=circle color=black];' + x + ';')
+        }
+      }
+      nodes = nodes.concat('\n    node [shape = plaintext];')
+      return nodes
+    },
+    defineTransitions: function (ds) {
+      // Splits dotscipt into array of strings per line
+      let transitions = ''
+      let result = this.dotscript.split(/\r?\n/)
+      result.forEach((element) => {
+        if (element.includes('label')) {
+          let index = element.indexOf(']')
+          let str = element.substring(0, index) + ' color=black' + element.substring(index, element.length)
+          transitions = transitions.concat('\n  ' + str)
+        }
+      })
+      return transitions
+    },
+    defineMyDotscipt: function () {
+      this.myDotscript = this.defineNodes() + this.defineTransitions() + '\n}'
+      console.log('MYYYYYYYYYYYYYYYYYYYYYYYYY')
+      console.log(this.myDotscript)
     }
   }
 }
