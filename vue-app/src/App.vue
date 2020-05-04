@@ -15,7 +15,7 @@
       </span>
     </Slide>
     <!-- <img src="./assets/logo.png"> -->
-    <Login></Login>
+    <!-- <Login></Login> -->
     <router-view/>
   </div>
 </template>

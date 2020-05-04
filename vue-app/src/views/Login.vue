@@ -2,7 +2,9 @@
     <div id="happy">
         <h1 class="mouse" >Google Authentication Website Application Demo</h1>
         <div class="g-signin2" data-onsuccess="onSignIn"></div>
-        <div id="content"></div>
+        <div id="content">
+          <p>Message is: {{ profileName }}</p>
+        </div>
         <p style="line-height: 30px; width: 300px; border: 1px solid black;"></p>
         <button onclick="signOut()">Sign Out</button>
     </div>
@@ -11,9 +13,8 @@
 export default {
   data: function () {
     return {
-      regex: '101',
-      fsm: 'empty fsm',
-      dotscript: 'empty ds'
+      profileName: '',
+      profileImg: ''
     }
   },
   methods: {
