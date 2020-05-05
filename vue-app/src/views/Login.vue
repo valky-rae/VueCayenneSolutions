@@ -1,28 +1,31 @@
 <template>
     <div id="happy">
         <h1 class="mouse" >Google Authentication Website Application Demo</h1>
-        <div class="g-signin2" data-onsuccess="onSignIn"></div>
+        <div class="g-signin2" data-onsuccess="onSignIn" v-on:click="onSignIn()"></div>
         <div id="content">
           <p>Message is: {{ profileName }}</p>
         </div>
         <p style="line-height: 30px; width: 300px; border: 1px solid black;"></p>
-        <button onclick="signOut()">Sign Out</button>
+        <button v-on:click="signOut()">Sign Out</button>
     </div>
 </template>
 <script>
 export default {
   data: function () {
     return {
-      profileName: '',
+      profileName: 'My name',
       profileImg: ''
     }
   },
   methods: {
     onSignIn: function (googleUser) { // automatically sign in
+      // add timer 10 sec
       var profile = googleUser.getBasicProfile()
       console.log('user is' + JSON.stringify(profile))
       var element = document.querySelector('#content')
       element.innerText = profile.getEmail()
+      this.profileName = profile.getName()
+      console.log('profile name is' + this.profileName)
       var image = document.createElement('img')
       image.setAttribute('src', profile.getImageUrl())
       element.append(image)

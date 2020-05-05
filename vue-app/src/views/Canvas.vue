@@ -1,6 +1,8 @@
 <template>
   <div>
-    <h1>Canvas</h1>
+    <div class="typewriter">
+      <h1>Canvas </h1>
+    </div>
     <button v-on:click="convert()"> Lets get it started </button>
     <button v-on:click="addState()"> Add state </button>
     <button v-on:click="addAcceptState()"> Add accept state </button>
@@ -271,20 +273,5 @@ export default {
   right: 15px;
   border: 3px solid #f1f1f1;
   z-index: 9;
-}
-button {
-    background-color: black;
-    color: white;
-    border: 0;
-    border-radius: 20px;
-    cursor: pointer;
-    box-shadow: 2px 2px white;
-    padding: 10px 15px 10px 15px;
-    font-size: 20px;
-    font-family: 'PT Mono';
-}
-button:hover {
-    background-color: white;
-    color: black;
 }
 </style>
