@@ -6,8 +6,9 @@
         <div>
           <span class="form-control">
             <input class="inputs" type="text" v-model="regex">
-                <button class="buttonGradient" v-on:click="simple()"> Simple Display </button>
-                <button v-on:click="convert()"> Convert to DotScript </button>
+                <button class="buttonGradient" v-on:click="simple()"> Display </button>
+                <button v-on:click="convert()"> CONVERT </button>
+                <button v-on:click="apply()"> Apply Transiotns  </button>
             <p class="hint"> Enter Regex Here</p>
             <p>Message is: {{ regex }}</p>
           </span>
@@ -72,6 +73,10 @@ export default {
     defineMyDotscipt: function () {
       this.myDotscript = this.defineNodes() + this.defineTransitions() + '\n}'
       return this.myDotscript
+    },
+    apply: function () {
+      var d = document.getElementById('node2')
+      d.className += 'animated infinite bounce'
     }
   }
 }

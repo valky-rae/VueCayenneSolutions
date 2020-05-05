@@ -51,7 +51,6 @@ export default {
   font-size: 25px;
   font-weight: bold;
   color: #36648B;
-  /* text-shadow: 1px 1px white; */
 }
 .icons{
   color: #36648B;
@@ -78,7 +77,10 @@ a {
 .bm-burger-bars {
   background-color: #36648B;
 }
-
+.bm-item-list span:hover {
+  animation: pulse;
+  animation-duration: 2s;
+}
 /* TYPEWRITER ANIMATION */
 .typewriter h1 {
   font-family: 'Chonburi', cursive;
