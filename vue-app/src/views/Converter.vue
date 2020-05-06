@@ -9,7 +9,7 @@
             <input class="inputs" type="text" v-model="inputStr" v-on:keyup="split()">
                 <button v-on:click="convert()"> CONVERT </button>
                 <!-- <button v-on:click="printStuff()"> print Stuff  </button> -->
-                <button v-on:click="myTest()"> My Test  </button>
+                <button v-on:click="pulseUp()"> My Test  </button>
                 <button class="buttonGradient" v-on:click="DFATrace()"> TRACE </button>
             <p class="hint"> Enter Regex Here</p>
             <p>Message is: {{ regex }}</p>
@@ -75,7 +75,11 @@ export default {
       console.log(this.splitStr)
     },
     render: function (dotscript) {
-      d3Graphviz.graphviz('#graph').renderDot(dotscript)
+      d3Graphviz.graphviz('#graph')
+        .attributer(function (d) {
+          console.log(d)
+        })
+        .renderDot(dotscript)
     },
     convert: function () {
       let regParser = require('automata.js')
@@ -164,6 +168,43 @@ export default {
           }
         }
       }
+    },
+    pulseUp: function () {
+      let key = 'node1'
+      d3Graphviz.graphviz('#graph')
+      // .transition(t)
+        .attributer(function (d) {
+          console.log(d)
+          if (d.tag === 'ellipse') {
+            d3.select(this)
+            if (d.parent.attributes.id === key) {
+              console.log('FOUND KEY NODE')
+              d.attributes.fill = 'pink'
+              d.attributes.rx = 23
+              d.attributes.ry = 23
+            } else if (d.attributes.rx !== '22') {
+              d.attributes.fill = 'white'
+              d.attributes.rx = '18'
+              d.attributes.ry = '18'
+            }
+          }
+        })
+        .renderDot(this.myDotscript)
+    },
+    pulseDown: function () {
+      d3Graphviz.graphviz('#graph')
+      // .transition(t)
+        .attributer(function (d) {
+          if (d.tag === 'ellipse') {
+            d3.select(this)
+            if (d.attributes.rx !== 22) {
+              d.attributes.fill = 'white'
+              d.attributes.rx = '18'
+              d.attributes.ry = '18'
+            }
+          }
+        })
+        .renderDot(this.myDotscript)
     }
   }
 }
