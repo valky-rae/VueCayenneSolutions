@@ -6,16 +6,15 @@
         <div>
           <span class="form-control">
             <input class="inputs" type="text" v-model="regex">
-            <input class="inputs" type="text" v-model="inputStr" v-on:keyup="split()">
+            <input class="inputs" type="text" v-model="inputStr" v-on:keyup="split2()">
                 <button v-on:click="convert()"> CONVERT </button>
-                <!-- <button v-on:click="printStuff()"> print Stuff  </button> -->
-                <button v-on:click="pulseUp()"> My Test  </button>
-                <button class="buttonGradient" v-on:click="DFATrace()"> TRACE </button>
+                <button v-on:click="printStuff()"> print Stuff  </button>
+                <!-- <button v-on:click="myTest()"> My Test  </button> -->
+                <button class="buttonGradient" v-on:click="DFATrace2()"> TRACE </button>
             <p class="hint"> Enter Regex Here</p>
             <p>Message is: {{ regex }}</p>
-            <span v-for="(char, index) in splitStr" v-bind:key="char">
-              <p id="this" class="bouncey"> {{char}} </p>
-              <p> {{index}} </p>
+            <span v-for="(char) in splitStr" v-bind:key="char">
+              <p id="this" v-bind:class = "{bouncey: char.isactive}"> {{char.char}} </p>
             </span>
           </span>
         </div>
@@ -36,8 +35,8 @@ export default {
       fsm: 'empty fsm',
       dotscript: 'empty ds',
       myDotscript: 'I am EMPTY',
-      inputStr: '10',
-      splitStr: ['1']
+      inputStr: '',
+      splitStr: [ ]
     }
   },
   components: {
@@ -45,39 +44,37 @@ export default {
   },
   methods: {
     myTest: function () {
-      // test 1
-      d3.select('body').style('color', function (d, i) {
-        return 'pink'
-      })
       console.log('pink')
-      // test 2
-      // let t = d3Graphviz.transition()
-      //   .duration(750)
-      //   .ease(d3.easeLinear)
-      // console.log(t)
-      // d3Graphviz.graphviz('#graph')
-      // .transition(t)
-      // .renderDot('digraph {a -> b}')
-      // test 3
-      d3Graphviz.graphviz('#graph').style('color', function (d, i) {
-        return 'pink'
-      })
+      let currNode = 2
+      this.getKey(currNode)
     },
-    split: function () {
+    split2: function () {
       let timeout = setTimeout(() => {
-        this.splitStr = this.inputStr.split('')
-        console.log(this.splitStr)
+        while (this.splitStr.length > 0) {
+          this.splitStr.pop()
+        }
+        for (let z = 0; z < this.inputStr.length; z++) {
+          let temp = {
+            'isactive': false,
+            'char': this.inputStr[z]
+          }
+          this.splitStr.push(temp)
+        }
       }, 1000)
       console.log(timeout)
-    },
-    printStuff: function () {
       console.log(this.inputStr)
       console.log(this.splitStr)
+    },
+    printStuff: function () {
+      let array = this.fsm.transitions[0][1]
+      console.log(array)
+
+      // console.log(this.fsm)
+      // console.log(this.splitStr)
     },
     render: function (dotscript) {
       d3Graphviz.graphviz('#graph')
         .attributer(function (d) {
-          console.log(d)
         })
         .renderDot(dotscript)
     },
@@ -169,12 +166,11 @@ export default {
         }
       }
     },
-    pulseUp: function () {
-      let key = 'node1'
+    pulseUp: function (key) {
+      console.log('in pulse up')
       d3Graphviz.graphviz('#graph')
       // .transition(t)
         .attributer(function (d) {
-          console.log(d)
           if (d.tag === 'ellipse') {
             d3.select(this)
             if (d.parent.attributes.id === key) {
@@ -183,7 +179,7 @@ export default {
               d.attributes.rx = 23
               d.attributes.ry = 23
             } else if (d.attributes.rx !== '22') {
-              d.attributes.fill = 'white'
+              d.attributes.fill = 'blue'
               d.attributes.rx = '18'
               d.attributes.ry = '18'
             }
@@ -191,7 +187,8 @@ export default {
         })
         .renderDot(this.myDotscript)
     },
-    pulseDown: function () {
+    pulseDown: function (key) {
+      console.log('in pulse down')
       d3Graphviz.graphviz('#graph')
       // .transition(t)
         .attributer(function (d) {
@@ -205,6 +202,74 @@ export default {
           }
         })
         .renderDot(this.myDotscript)
+    },
+    getKey: function (currNode) {
+      console.log('getting key')
+      let num = currNode + 1
+      let key = 'node' + num.toString()
+      console.log(key)
+      return key
+    },
+    highlightNode: function (node) {
+      let key = this.getKey(node)
+      console.log('KEY IS>>>' + key)
+      setTimeout(this.pulseUp, 2000, key)
+      setTimeout(this.pulseDown, 4000, key)
+      // (key), 2000)
+      // setTimeout(this.pulseDown(key), 4000)
+      // this.pulseUp(key)
+    },
+    DFATrace2: function () {
+      let arrayDiagraph = this.myDotscript.split(/\r?\n/)
+      let currNode = '0'
+      let time = 0
+      // for each char in the input string
+      for (let x = 0; x < this.splitStr.length; x++) {
+        // define checkers
+        this.splitStr[x].isactive = true
+        let str1 = 'label=' + '"' + this.splitStr[x].char + '"'
+        let str2 = currNode + '->'
+        // for each element of the diagraph DO CHECK
+        for (let z = 0; z < this.fsm.numOfStates; z++) {
+          if (this.fsm.transitions[currNode][z] === this.splitStr[x].char) {
+            // HIHGLIGH ARROW
+            arrayDiagraph = this.highlightArrow(arrayDiagraph, str1, str2)
+            let renderChange = arrayDiagraph.join('\n')
+            time += 1000
+            setTimeout(this.render, time, renderChange)
+            // HIGHLIGHT NODE
+            this.highlightNode(x)
+            // transition fucntion that pulses node
+            currNode = z.toString()
+            // UNHIGHLIGHT ARROW
+            arrayDiagraph = this.unhighlightArrow(arrayDiagraph, str1, str2)
+            renderChange = arrayDiagraph.join('\n')
+            time += 6000
+            setTimeout(this.render, time, renderChange)
+          }
+        }
+        this.splitStr[x].isactive = false
+      }
+    },
+    highlightArrow: function (array, str1, str2) {
+      let x = 0
+      while (x < array.length) {
+        if (array[x].includes(str1) && array[x].includes(str2)) {
+          array[x] = array[x].replace('black', 'blue')
+        }
+        x++
+      }
+      return array
+    },
+    unhighlightArrow: function (array, str1, str2) {
+      let x = 0
+      while (x < array.length) {
+        if (array[x].includes(str1) && array[x].includes(str2)) {
+          array[x] = array[x].replace('blue', 'black')
+        }
+        x++
+      }
+      return array
     }
   }
 }
