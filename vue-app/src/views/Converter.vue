@@ -8,8 +8,8 @@
             <input class="inputs" type="text" v-model="regex">
             <input class="inputs" type="text" v-model="inputStr" v-on:keyup="split2()">
                 <button v-on:click="convert()"> CONVERT </button>
-                <button v-on:click="printStuff()"> print Stuff  </button>
-                <!-- <button v-on:click="myTest()"> My Test  </button> -->
+                <!-- <button v-on:click="printStuff()"> print Stuff  </button> -->
+                <button v-on:click="myTest()"> My Test  </button>
                 <button class="buttonGradient" v-on:click="DFATrace2()"> TRACE </button>
             <p class="hint"> Enter Regex Here</p>
             <p>Message is: {{ regex }}</p>
@@ -44,9 +44,7 @@ export default {
   },
   methods: {
     myTest: function () {
-      console.log('pink')
-      let currNode = 2
-      this.getKey(currNode)
+      console.log(d3Graphviz.graphviz('#graph'))
     },
     split2: function () {
       let timeout = setTimeout(() => {
@@ -73,10 +71,22 @@ export default {
       // console.log(this.splitStr)
     },
     render: function (dotscript) {
-      d3Graphviz.graphviz('#graph')
+      // let t = d3Graphviz.transitix
+      // d3Graphviz.graphviz('#graph')
+      //   .transition(t)
+      //   .attributer(function (d) {
+      //   })
+      //   .renderDot(dotscript)
+      // test 2
+      d3.select('#graph').graphviz()
+        // .transition(t)
         .attributer(function (d) {
+          if (d.tag === 'path') {
+            d3.select(this)
+            console.log(d)
+          }
         })
-        .renderDot(dotscript)
+        .renderDot(this.myDotscript)
     },
     convert: function () {
       let regParser = require('automata.js')
@@ -273,6 +283,19 @@ export default {
         x++
       }
       return array
+    },
+    buildDiagraph: function () {
+      let regParser = require('automata.js')
+      let parser = new regParser.RegParser(this.regex)
+      this.fsm = parser.parseToDFA()
+      this.dotscript = this.fsm.toDotScript()
+      this.render(this.defineMyDotscipt())
+      // wow
+      this.myDotscript = this.defineNodes() + this.defineTransitions() + '\n}'
+      return this.myDotscript
+      // wow
+      // let arrayDotscript = []
+      // wow
     }
   }
 }
