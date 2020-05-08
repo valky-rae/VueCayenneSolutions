@@ -166,7 +166,7 @@ export default {
         }
       }
     },
-    pulseUp: function (key) {
+    pulseUp: function (key, dotscript) {
       console.log('in pulse up')
       d3Graphviz.graphviz('#graph')
       // .transition(t)
@@ -175,56 +175,53 @@ export default {
             d3.select(this)
             if (d.parent.attributes.id === key) {
               console.log('FOUND KEY NODE')
-              d.attributes.fill = 'pink'
+              d.attributes.fill = '#75a1d0'
               d.attributes.rx = 23
               d.attributes.ry = 23
             } else if (d.attributes.rx !== '22') {
-              d.attributes.fill = 'blue'
-              d.attributes.rx = '18'
-              d.attributes.ry = '18'
-            }
-          }
-        })
-        .renderDot(this.myDotscript)
-    },
-    pulseDown: function (key) {
-      console.log('in pulse down')
-      d3Graphviz.graphviz('#graph')
-      // .transition(t)
-        .attributer(function (d) {
-          if (d.tag === 'ellipse') {
-            d3.select(this)
-            if (d.attributes.rx !== 22) {
               d.attributes.fill = 'white'
               d.attributes.rx = '18'
               d.attributes.ry = '18'
             }
           }
         })
-        .renderDot(this.myDotscript)
+        .renderDot(dotscript)
+    },
+    pulseDown: function (key, dotscript) {
+      console.log('in pulse down')
+      d3Graphviz.graphviz('#graph')
+      // .transition(t)
+        .attributer(function (d) {
+          if (d.tag === 'ellipse') {
+            d3.select(this)
+            if (d.attributes.rx !== '22') {
+              d.attributes.fill = 'white'
+              d.attributes.rx = '18'
+              d.attributes.ry = '18'
+            }
+          }
+        })
+        .renderDot(dotscript)
     },
     getKey: function (currNode) {
-      console.log('getting key')
       let num = currNode + 1
       let key = 'node' + num.toString()
-      console.log(key)
+      console.log('CURRNODE KEY>> ' + currNode + ' is ' + key)
       return key
     },
-    highlightNode: function (node) {
+    highlightNode: function (node, time, dotscipt) {
       let key = this.getKey(node)
-      console.log('KEY IS>>>' + key)
-      setTimeout(this.pulseUp, 2000, key)
-      setTimeout(this.pulseDown, 4000, key)
-      // (key), 2000)
-      // setTimeout(this.pulseDown(key), 4000)
-      // this.pulseUp(key)
+      time += 1000
+      setTimeout(this.pulseUp, time, key)
+      time += 3000
+      setTimeout(this.pulseDown, time, key, dotscipt)
     },
     DFATrace2: function () {
       let arrayDiagraph = this.myDotscript.split(/\r?\n/)
       let currNode = '0'
       let time = 0
       // for each char in the input string
-      for (let x = 0; x < this.splitStr.length; x++) {
+      for (let x = 0; x <= this.splitStr.length; x++) {
         // define checkers
         this.splitStr[x].isactive = true
         let str1 = 'label=' + '"' + this.splitStr[x].char + '"'
@@ -238,14 +235,20 @@ export default {
             time += 1000
             setTimeout(this.render, time, renderChange)
             // HIGHLIGHT NODE
-            this.highlightNode(x)
+            // this.highlightNode(z, time, renderChange)
+            let key = this.getKey(z)
+            time += 1000
+            setTimeout(this.pulseUp, time, key, renderChange)
             // transition fucntion that pulses node
             currNode = z.toString()
             // UNHIGHLIGHT ARROW
             arrayDiagraph = this.unhighlightArrow(arrayDiagraph, str1, str2)
             renderChange = arrayDiagraph.join('\n')
-            time += 6000
+            time += 1000
             setTimeout(this.render, time, renderChange)
+            // pulse down
+            time += 1000
+            setTimeout(this.pulseDown, time, key, renderChange)
           }
         }
         this.splitStr[x].isactive = false
@@ -312,6 +315,7 @@ export default {
     height: 400px;
     width: 100%;
     background-color: white ;
+    /* background-color: transparent; */
     border: 2px solid aliceblue;
     border-radius: 5px;
     margin-top: 2%;
