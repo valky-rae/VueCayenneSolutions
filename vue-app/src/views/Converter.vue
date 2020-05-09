@@ -9,7 +9,7 @@
             <input class="inputs" type="text" v-model="inputStr" v-on:keyup="split2()">
                 <button v-on:click="convert()"> CONVERT </button>
                 <button v-on:click="buildDigraphArray()"> Build array  </button>
-                <button class="buttonGradient" v-on:click="DFATrace3()"> TRACE </button>
+                <button class="buttonGradient" v-on:click="DFATrace4()"> TRACE </button>
             <p class="hint"> Enter Regex Here</p>
             <p>Message is: {{ regex }}</p>
             <span v-for="(char) in splitStr" v-bind:key="char">
@@ -119,8 +119,9 @@ export default {
       let parser = new regParser.RegParser(this.regex)
       this.fsm = parser.parseToDFA()
       this.dotscript = this.fsm.toDotScript()
-      this.render(this.defineMyDotscipt())
-      console.log(this.myDotscript)
+      this.myDotscript = this.defineMyDotscipt()
+      this.render(this.myDotscript)
+      // this.buildDigraphArray()
     },
     defineNodes: function () {
       let nodes = 'digraph finite_state_machine {\n    rankdir = LR;'
@@ -341,6 +342,58 @@ export default {
         this.splitStr[x].isactive = false
       }
     },
+    DFATrace4: function () {
+      console.log('DFA TRACE 4')
+      let arrayDiagraph = this.myDotscript.split(/\r?\n/)
+      let currNode = 0
+      let nextNode = 0
+      let time = 0
+      // for each char in the input string
+      // console.log(this.splitStr.length)
+      for (let x = 0; x < this.splitStr.length; x++) {
+        // define checkers
+        this.splitStr[x].isactive = true
+        let str1 = 'label=' + '"' + this.splitStr[x].char + '"'
+        let str2 = currNode + '->'
+        console.log('CHECKING' + str1 + str2)
+        // for each element of the diagraph DO CHECK
+        for (let z = 0; z < this.fsm.numOfStates; z++) {
+          if (this.fsm.transitions[currNode][z] === this.splitStr[x].char) {
+            nextNode = z
+            console.log('reach here')
+            break
+          } else {
+            nextNode = null
+          }
+        }
+        console.log(nextNode)
+        if (nextNode === null) {
+          console.log('this aint it sis')
+          return
+        }
+        // HIHGLIGH ARROW
+        arrayDiagraph = this.highlightArrow(arrayDiagraph, str1, str2)
+        let renderChange = arrayDiagraph.join('\n')
+        time += 1000
+        setTimeout(this.render, time, renderChange)
+        // HIGHLIGHT NODE
+        // this.highlightNode(z, time, renderChange)
+        let key = this.getKey(nextNode)
+        time += 1000
+        setTimeout(this.pulseUp, time, key, renderChange)
+        // transition fucntion that pulses node
+        currNode = nextNode
+        // UNHIGHLIGHT ARROW
+        arrayDiagraph = this.unhighlightArrow(arrayDiagraph, str1, str2)
+        renderChange = arrayDiagraph.join('\n')
+        time += 1000
+        setTimeout(this.render, time, renderChange)
+        // pulse down
+        time += 1000
+        setTimeout(this.pulseDown, time, key, renderChange)
+        this.splitStr[x].isactive = false
+      }
+    },
     highlightArrow: function (array, str1, str2) {
       let x = 0
       while (x < array.length) {
@@ -386,7 +439,6 @@ export default {
       this.digraphArray = digraphArray
       let time = 1000
       for (let z = 0; z < this.digraphArray.length; z++) {
-        console.log(this.digraphArray[z])
         setTimeout(this.renderT, time, digraphArray[z])
         time += 2000
       }
