@@ -9,7 +9,7 @@
             <input class="inputs" type="text" v-model="inputStr" v-on:keyup="split2()">
                 <button v-on:click="convert()"> CONVERT </button>
                 <button v-on:click="buildDigraphArray()"> Build array  </button>
-                <!-- <button class="buttonGradient" v-on:click="DFATrace3()"> TRACE </button> -->
+                <button class="buttonGradient" v-on:click="DFATrace3()"> TRACE </button>
             <p class="hint"> Enter Regex Here</p>
             <p>Message is: {{ regex }}</p>
             <span v-for="(char) in splitStr" v-bind:key="char">
@@ -92,12 +92,35 @@ export default {
       //   .transition(t)
       //   .renderDot(this.myDotscript)
     },
+    renderT: function (dotscript) {
+      let t = d3.transition()
+        .duration(1500)
+        .ease(d3.easeLinear)
+      // console.log(t)
+      // METHOD 1 RENDER
+      d3Graphviz.graphviz('#graph')
+        .transition(t)
+        .attributer(function (d) {
+        })
+        .renderDot(dotscript)
+      // METHOD 2 RENDER
+      // d3.select('#graph').graphviz()
+      //   .attributer(function (d) {
+      //     if (d.tag === 'path') {
+      //       d3.select(this)
+      //       console.log(d)
+      //     }
+      //   })
+      //   .transition(t)
+      //   .renderDot(this.myDotscript)
+    },
     convert: function () {
       let regParser = require('automata.js')
       let parser = new regParser.RegParser(this.regex)
       this.fsm = parser.parseToDFA()
       this.dotscript = this.fsm.toDotScript()
       this.render(this.defineMyDotscipt())
+      console.log(this.myDotscript)
     },
     defineNodes: function () {
       let nodes = 'digraph finite_state_machine {\n    rankdir = LR;'
@@ -182,8 +205,12 @@ export default {
     },
     pulseUp: function (key, dotscript) {
       console.log('in pulse up key is' + key)
+      let t = d3.transition()
+        .duration(500)
+        .ease(d3.easeLinear)
       // d3Graphviz.graphviz('#graph')
       d3.select('#graph').graphviz()
+        .transition(t)
         .attributer(function (d) {
           if (d.tag === 'ellipse') {
             d3.select(this)
@@ -203,8 +230,11 @@ export default {
     },
     pulseDown: function (key, dotscript) {
       console.log('in pulse down')
+      let t = d3.transition()
+        .duration(500)
+        .ease(d3.easeLinear)
       d3Graphviz.graphviz('#graph')
-      // .transition(t)
+        .transition(t)
         .attributer(function (d) {
           if (d.tag === 'ellipse') {
             d3.select(this)
@@ -339,7 +369,6 @@ export default {
       let dots = this.defineNodes() + '\n' + transitions[1] + endStr
       transitions.shift()
       transitions.shift()
-      // console.log(transitions[0])
       digraphArray.push(dots)
       dots = dots.split(/\r?\n/)
       for (let x = 0; x < this.fsm.numOfStates; x++) {
@@ -347,19 +376,20 @@ export default {
         let str1 = x + '->'
         let tempTransitions = transitions.filter(item => item.includes(str1))
         transitions = transitions.filter(item => !item.includes(str1))
-        console.log(tempTransitions)
-        dots.push(tempTransitions[0])
+        for (let y = 0; y < tempTransitions.length; y++) {
+          dots.push(tempTransitions[y])
+        }
         dots.push('}')
         let tempDigraph = dots.join('\n')
         digraphArray.push(tempDigraph)
       }
-      console.log(digraphArray[0])
-      console.log(digraphArray[1])
-      console.log(digraphArray[2])
-      console.log(digraphArray[3])
-      console.log(digraphArray[4])
       this.digraphArray = digraphArray
-      this.renderBuild(0)
+      let time = 1000
+      for (let z = 0; z < this.digraphArray.length; z++) {
+        console.log(this.digraphArray[z])
+        setTimeout(this.renderT, time, digraphArray[z])
+        time += 2000
+      }
     },
     renderBuild: function (dotIndex) {
       if (dotIndex === this.digraphArray.length) {
