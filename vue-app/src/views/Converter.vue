@@ -8,9 +8,8 @@
             <input class="inputs" type="text" v-model="regex">
             <input class="inputs" type="text" v-model="inputStr" v-on:keyup="split2()">
                 <button v-on:click="convert()"> CONVERT </button>
-                <button v-on:click="buildDiagraph()"> Build It  </button>
-                <button v-on:click="myTest()"> My Test  </button>
-                <button class="buttonGradient" v-on:click="DFATrace3()"> TRACE </button>
+                <button v-on:click="buildDigraphArray()"> Build array  </button>
+                <!-- <button class="buttonGradient" v-on:click="DFATrace3()"> TRACE </button> -->
             <p class="hint"> Enter Regex Here</p>
             <p>Message is: {{ regex }}</p>
             <span v-for="(char) in splitStr" v-bind:key="char">
@@ -36,7 +35,8 @@ export default {
       dotscript: 'empty ds',
       myDotscript: 'I am EMPTY',
       inputStr: '',
-      splitStr: [ ]
+      splitStr: [ ],
+      digraphArray: []
     }
   },
   components: {
@@ -331,21 +331,55 @@ export default {
       }
       return array
     },
-    buildDiagraph: function () {
-      let regParser = require('automata.js')
-      let parser = new regParser.RegParser(this.regex)
-      this.fsm = parser.parseToDFA()
-      this.dotscript = this.fsm.toDotScript()
-      // this.render(this.defineMyDotscipt())
-      // wow
-      this.myDotscript = this.defineNodes() + this.defineTransitions() + '\n}'
-
-      let renderChange = this.defineNodes() + '\n}'
-      this.render(renderChange)
-      // return this.myDotscript
-      // wow
-      // let arrayDotscript = []
-      // wow
+    buildDigraphArray: function () {
+      let digraphArray = []
+      let endStr = '\n}'
+      let transitions = this.defineTransitions()
+      transitions = transitions.split(/\r?\n/)
+      let dots = this.defineNodes() + '\n' + transitions[1] + endStr
+      transitions.shift()
+      transitions.shift()
+      // console.log(transitions[0])
+      digraphArray.push(dots)
+      dots = dots.split(/\r?\n/)
+      for (let x = 0; x < this.fsm.numOfStates; x++) {
+        dots.pop()
+        let str1 = x + '->'
+        let tempTransitions = transitions.filter(item => item.includes(str1))
+        transitions = transitions.filter(item => !item.includes(str1))
+        console.log(tempTransitions)
+        dots.push(tempTransitions[0])
+        dots.push('}')
+        let tempDigraph = dots.join('\n')
+        digraphArray.push(tempDigraph)
+      }
+      console.log(digraphArray[0])
+      console.log(digraphArray[1])
+      console.log(digraphArray[2])
+      console.log(digraphArray[3])
+      console.log(digraphArray[4])
+      this.digraphArray = digraphArray
+      this.renderBuild(0)
+    },
+    renderBuild: function (dotIndex) {
+      if (dotIndex === this.digraphArray.length) {
+        return
+      }
+      var dot = this.digraphArray[dotIndex]
+      // var dot = dotLines.join('')
+      d3.select('#graph').graphviz()
+        .transition(function () {
+          return d3.transition('main')
+            .ease(d3.easeLinear)
+            .delay(500)
+            .duration(1500)
+        })
+        .logEvents(true)
+        .renderDot(dot)
+        .on('end', function () {
+          dotIndex = dotIndex + 1
+          this.renderBuild()
+        })
     }
   }
 }
