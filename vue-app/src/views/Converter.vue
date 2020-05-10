@@ -214,7 +214,6 @@ export default {
       let nextNode = 0
       let time = 0
       // for each char in the input string
-      // console.log(this.splitStr.length)
       for (let x = 0; x < this.splitStr.length; x++) {
         // define checkers
         this.splitStr[x].isactive = true
@@ -255,11 +254,7 @@ export default {
       // })
       this.splitStr[x].isactive = true
     },
-    startDFATrace: function () {
-      console.log('starting trace')
-    },
     DFATrace4: function () {
-      console.log('DFA TRACE 4')
       let arrayDiagraph = this.myDotscript.split(/\r?\n/)
       let currNode = 0
       let nextNode = 0
@@ -277,9 +272,6 @@ export default {
       setTimeout(this.pulseDown, 1000, 'node1', renderChange)
       // for each char in the input string
       for (let x = 0; x < this.splitStr.length; x++) {
-        // activate += 2000
-        // setTimeout(this.activateInputStr, activate, x)
-        // this.splitStr[x].isactive = true
         let str1 = 'label=' + '"' + this.splitStr[x].char + '"'
         let str2 = currNode + '->'
         console.log('CHECKING' + str1 + str2)
@@ -302,7 +294,6 @@ export default {
         time += 500
         setTimeout(this.render, time, renderChange)
         // HIGHLIGHT NODE
-        // this.highlightNode(z, time, renderChange)
         let key = this.getKey(nextNode)
         time += 250
         setTimeout(this.pulseUp, time, key, renderChange)
@@ -314,7 +305,6 @@ export default {
         time += 1000
         setTimeout(this.render, time, renderChange)
         setTimeout(this.pulseDown, time, key, renderChange)
-        // this.splitStr[x].isactive = false
       }
       this.sucessTrace()
     },
@@ -343,26 +333,6 @@ export default {
     },
     successTrace: function () {
       alert('YOU PASSED')
-    },
-    renderBuild: function (dotIndex) {
-      if (dotIndex === this.digraphArray.length) {
-        return
-      }
-      var dot = this.digraphArray[dotIndex]
-      // var dot = dotLines.join('')
-      d3.select('#graph').graphviz()
-        .transition(function () {
-          return d3.transition('main')
-            .ease(d3.easeLinear)
-            .delay(500)
-            .duration(1500)
-        })
-        .logEvents(true)
-        .renderDot(dot)
-        .on('end', function () {
-          dotIndex = dotIndex + 1
-          this.renderBuild()
-        })
     }
   }
 }
