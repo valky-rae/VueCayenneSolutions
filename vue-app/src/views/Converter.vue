@@ -12,9 +12,6 @@
                 <button class="buttonGradient" v-on:click="DFATrace4()"> TRACE </button>
             <p class="hint"> Enter Regex Here</p>
             <p>Message is: {{ inputStr }}</p>
-            <span v-for="(char) in splitStr" v-bind:key="char">
-              <p id="this" v-bind:class = "{heartBeat: char.isactive}"> {{char.char}} </p>
-            </span>
           </span>
         </div>
         <div id="graph" class="prettygraph" style="text-align: center;"></div>
@@ -65,6 +62,7 @@ export default {
       d3Graphviz.graphviz('#graph')
         // .transition(t)
         .attributer(function (d) {
+
         })
         .renderDot(dotscript)
     },
@@ -295,7 +293,7 @@ export default {
           }
         }
         if (nextNode === null && x < this.splitStr.length) {
-          console.log('this aint it sis')
+          this.failTrace()
           return
         }
         // HIHGLIGH ARROW
@@ -318,6 +316,7 @@ export default {
         setTimeout(this.pulseDown, time, key, renderChange)
         // this.splitStr[x].isactive = false
       }
+      this.sucessTrace()
     },
     highlightArrow: function (array, str1, str2) {
       let x = 0
@@ -338,6 +337,12 @@ export default {
         x++
       }
       return array
+    },
+    failTrace: function () {
+      alert('YOU FAILED')
+    },
+    successTrace: function () {
+      alert('YOU PASSED')
     },
     renderBuild: function (dotIndex) {
       if (dotIndex === this.digraphArray.length) {
