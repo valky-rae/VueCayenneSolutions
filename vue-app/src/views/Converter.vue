@@ -9,10 +9,9 @@
             <input class="inputs" type="text" v-model="regex">
             <input class="inputs" type="text" v-model="inputStr" v-on:keyup="split2()">
                 <button v-on:click="convert()"> CONVERT </button>
-                <button v-on:click="buildDigraphArray()"> Build array  </button>
                 <button class="buttonGradient" v-on:click="DFATrace4()"> TRACE </button>
             <p class="hint"> Enter Regex Here</p>
-            <p>Message is: {{ regex }}</p>
+            <p>Message is: {{ inputStr }}</p>
             <span v-for="(char) in splitStr" v-bind:key="char">
               <p id="this" v-bind:class = "{heartBeat: char.isactive}"> {{char.char}} </p>
             </span>
