@@ -1,4 +1,5 @@
 <template>
+<transition name="component-fade" mce="in-out" appear>
     <div>
         <div class="typewriter">
             <h1>Cayenne Converter </h1>
@@ -23,6 +24,7 @@
         <Carousel>
         </Carousel>
     </div>
+</transition>
 </template>
 <script>
 import * as d3Graphviz from 'd3-graphviz'

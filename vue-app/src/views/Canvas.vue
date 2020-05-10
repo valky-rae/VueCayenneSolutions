@@ -1,24 +1,41 @@
 <template>
+<transition name="component-fade" mce="in-out" appear>
   <div>
     <div class="typewriter">
       <h1>Canvas </h1>
     </div>
-    <button v-on:click="convert()"> Lets get it started </button>
-    <button v-on:click="addState()"> Add state </button>
-    <button v-on:click="addAcceptState()"> Add accept state </button>
-    <button v-on:click="addEdge()"> Add arrow </button>
-    <button v-on:click="deleteG()"> Delete </button>
-
-    <div id="graph" style="text-align: center; border-style: solid; width: 100%; height: 50%" v-on:click.capture="onNodeClick()"></div>
-    <div class="form-popup" id="myForm">
+    <span style="display:flex">
+      <div class="icon-bar">
+        <button v-on:click="convert()">
+          <img src="../assets/start.png" alt="start" />
+        </button>
+        <button v-on:click="addState()">
+          <img src="../assets/state.png" alt="add state" />
+        </button>
+        <button v-on:click="addAcceptState()">
+          <img src="../assets/accept_state.png" alt="add accept state" />
+        </button>
+        <button v-on:click="addEdge()">
+          <img src="../assets/arrow.png" alt="add arrow" />
+        </button>
+        <button v-on:click="deleteG()">
+          <img src="../assets/delete.png" alt="delete" />
+        </button>
+      </div>
+      <div id="graph" class="prettygraph" style="text-align: center;" v-on:click.capture="onNodeClick()"></div>
+    </span>
+    <div class="form-popup" id="myForm" style="background-color:aliceblue" v-on:click.capture="stopJump()">
+      <br>
       <form class="form-container" id="labelForm">
         <label><b>New Label</b></label>
         <input type="text" placeholder="Enter New Label" name="new_label" required>
         <button v-on:click="newLabel()"> Change </button>
         <button v-on:click="closeForm()">Close</button>
       </form>
+      <br>
     </div>
   </div>
+</transition>
 </template>
 <script>
 import * as d3Graphviz from 'd3-graphviz'
@@ -26,11 +43,11 @@ import * as d3Graphviz from 'd3-graphviz'
 export default {
   data () {
     return {
-      editDot: ['digraph  {', ' node [shape=circle style="filled"]', ' a [fillcolor="#d62728"]', ' b [fillcolor="#1f77b4"]', ' ',
+      editDot: ['digraph  {', ' node [shape=circle style="filled"]', ' a [fillcolor="white"]', ' b [fillcolor="white"]', ' ',
         'a -> b [label=a]', '}'],
       selectedNode: null,
       nodeName: 'b',
-      accent: ' [color=orange fillcolor=white] ',
+      accent: ' [color=navyblue fillcolor=aliceblue] ',
       node1: null,
       node2: null,
       addingEdge: false,
@@ -78,7 +95,7 @@ export default {
       }
       const val = this.editDot[nName]
       var arr1 = this.editDot[nName].split('[')
-      this.editDot[nName] = arr1[0] + '[color=orange fillcolor=orange ' + arr1[1]
+      this.editDot[nName] = arr1[0] + '[color="navyblue" fillcolor="navyblue"' + arr1[1]
       this.convert()
       for (i = 0; i < this.editDot.length; i++) {
         this.accentDot[i] = this.editDot[i]
@@ -90,7 +107,7 @@ export default {
       if (this.selectedNode != null) {
         this.nodeName = String.fromCharCode(this.nodeName.charCodeAt(0) + 1)
         var prevName = String.fromCharCode('a'.charCodeAt(0) + parseInt(this.selectedNode - 1))
-        var state = ' ' + this.nodeName + ' [fillcolor="#d62728"]'
+        var state = ' ' + this.nodeName + ' [fillcolor="white"]'
         var edge = ' ' + prevName + ' -> ' + this.nodeName + ' [label="' + prevName + '->' + this.nodeName + '"]'
         var i
         for (i = 0; i < this.editDot.length; i++) {
@@ -113,7 +130,7 @@ export default {
       if (this.selectedNode != null) {
         this.nodeName = String.fromCharCode(this.nodeName.charCodeAt(0) + 1)
         var prevName = String.fromCharCode('a'.charCodeAt(0) + parseInt(this.selectedNode - 1))
-        var state = ' ' + this.nodeName + ' [shape=doublecircle fillcolor="#d62728"]'
+        var state = ' ' + this.nodeName + ' [shape=doublecircle fillcolor="white"]'
         var edge = ' ' + prevName + ' -> ' + this.nodeName + ' [label="' + prevName + '->' + this.nodeName + '"]'
         var i
         for (i = 0; i < this.editDot.length; i++) {
@@ -243,8 +260,14 @@ export default {
       }
       this.convert()
     },
+    stopJump () {
+      var d = document.getElementById('myForm')
+      d.className = ''
+    },
     openForm () {
-      document.getElementById('myForm').style.display = 'block'
+      var d = document.getElementById('myForm')
+      d.style.display = 'block'
+      d.className = 'animated infinite bounce'
     },
     closeForm () {
       document.getElementById('myForm').style.display = 'none'
@@ -273,5 +296,39 @@ export default {
   right: 15px;
   border: 3px solid #f1f1f1;
   z-index: 9;
+  background-color: aliceblue ;
+}
+
+.icon-bar {
+  width: 90px; /* Set a specific width */
+  background-color: white ;
+  border: 2px solid aliceblue;
+  border-radius: 5px;
+}
+
+.icon-bar a {
+  display: block; /* Make the links appear below each other instead of side-by-side */
+  text-align: center; /* Center-align text */
+  padding: 16px; /* Add some padding */
+  transition: all 0.3s ease; /* Add transition for hover effects */
+  color: white; /* White text color */
+  font-size: 36px; /* Increased font-size */
+}
+
+.icon-bar a:hover {
+  background-color: #000; /* Add a hover color */
+}
+
+.active {
+  background-color: #4CAF50; /* Add an active/current color */
+}
+.prettygraph{
+    display: block;
+    height: 400px;
+    width: 100%;
+    background-color: white ;
+    border: 2px solid aliceblue;
+    border-radius: 5px;
+    margin-top: 2%;
 }
 </style>

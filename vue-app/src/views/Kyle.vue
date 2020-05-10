@@ -1,8 +1,10 @@
 <template>
+<transition name="component-fade" mce="in-out" appear>
     <div>
         <h1 id="header"> I AM KYLE </h1>
         <button v-on:click="apply()"> APPLY TRANSITIONS PLEASE </button>
     </div>
+</transition>
 </template>
 
 <script>
@@ -17,10 +19,4 @@ export default {
 </script>
 
 <style scoped>
-.fades{
-  animation: fadeInUp;
-  animation-duration: 4s;
-  /* animation-delay: 2s; */
-  animation-iteration-count: 1;
-}
 </style>
