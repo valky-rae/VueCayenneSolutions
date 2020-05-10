@@ -61,33 +61,16 @@ export default {
       console.log(this.splitStr)
     },
     render: function (dotscript) {
-      // let t = d3.transition()
-      //   .duration(4000)
-      //   .ease(d3.easeLinear)
-      // console.log(t)
-      // METHOD 1 RENDER
       d3Graphviz.graphviz('#graph')
         // .transition(t)
         .attributer(function (d) {
         })
         .renderDot(dotscript)
-      // METHOD 2 RENDER
-      // d3.select('#graph').graphviz()
-      //   .attributer(function (d) {
-      //     if (d.tag === 'path') {
-      //       d3.select(this)
-      //       console.log(d)
-      //     }
-      //   })
-      //   .transition(t)
-      //   .renderDot(this.myDotscript)
     },
     renderT: function (dotscript) {
       let t = d3.transition()
         .duration(1500)
         .ease(d3.easeLinear)
-      // console.log(t)
-      // METHOD 1 RENDER
       d3Graphviz.graphviz('#graph')
         .transition(t)
         .attributer(function (d) {
@@ -110,8 +93,8 @@ export default {
       this.fsm = parser.parseToDFA()
       this.dotscript = this.fsm.toDotScript()
       this.myDotscript = this.defineMyDotscipt()
-      this.render(this.myDotscript)
-      // this.buildDigraphArray()
+      // this.render(this.myDotscript)
+      this.buildDigraphArray()
     },
     buildDigraphArray: function () {
       let digraphArray = []
@@ -251,7 +234,6 @@ export default {
         time += 1000
         setTimeout(this.render, time, renderChange)
         // HIGHLIGHT NODE
-        // this.highlightNode(z, time, renderChange)
         let key = this.getKey(nextNode)
         time += 1000
         setTimeout(this.pulseUp, time, key, renderChange)
