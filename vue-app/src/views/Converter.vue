@@ -13,7 +13,7 @@
             <p class="hint"> Enter Regex Here</p>
             <p>Message is: {{ regex }}</p>
             <span v-for="(char) in splitStr" v-bind:key="char">
-              <p id="this" v-bind:class = "{bouncey: char.isactive}"> {{char.char}} </p>
+              <p id="this" v-bind:class = "{heartBeat: char.isactive}"> {{char.char}} </p>
             </span>
           </span>
         </div>
@@ -43,9 +43,6 @@ export default {
     Carousel
   },
   methods: {
-    myTest: function () {
-      console.log(d3Graphviz.graphviz('#graph'))
-    },
     split2: function () {
       let timeout = setTimeout(() => {
         while (this.splitStr.length > 0) {
@@ -62,13 +59,6 @@ export default {
       console.log(timeout)
       console.log(this.inputStr)
       console.log(this.splitStr)
-    },
-    printStuff: function () {
-      let array = this.fsm.transitions[0][1]
-      console.log(array)
-
-      // console.log(this.fsm)
-      // console.log(this.splitStr)
     },
     render: function (dotscript) {
       // let t = d3.transition()
@@ -123,6 +113,35 @@ export default {
       this.render(this.myDotscript)
       // this.buildDigraphArray()
     },
+    buildDigraphArray: function () {
+      let digraphArray = []
+      let endStr = '\n}'
+      let transitions = this.defineTransitions()
+      transitions = transitions.split(/\r?\n/)
+      let dots = this.defineNodes() + '\n' + transitions[1] + endStr
+      transitions.shift()
+      transitions.shift()
+      digraphArray.push(dots)
+      dots = dots.split(/\r?\n/)
+      for (let x = 0; x < this.fsm.numOfStates; x++) {
+        dots.pop()
+        let str1 = x + '->'
+        let tempTransitions = transitions.filter(item => item.includes(str1))
+        transitions = transitions.filter(item => !item.includes(str1))
+        for (let y = 0; y < tempTransitions.length; y++) {
+          dots.push(tempTransitions[y])
+        }
+        dots.push('}')
+        let tempDigraph = dots.join('\n')
+        digraphArray.push(tempDigraph)
+      }
+      this.digraphArray = digraphArray
+      let time = 1000
+      for (let z = 0; z < this.digraphArray.length; z++) {
+        setTimeout(this.renderT, time, digraphArray[z])
+        time += 2000
+      }
+    },
     defineNodes: function () {
       let nodes = 'digraph finite_state_machine {\n    rankdir = LR;'
       for (var x = 0; x < this.fsm.numOfStates; x++) {
@@ -152,64 +171,11 @@ export default {
       this.myDotscript = this.defineNodes() + this.defineTransitions() + '\n}'
       return this.myDotscript
     },
-    DFATrace: function () {
-      let myDiagraph = this.myDotscript
-      let inputstr = '101'
-      let arrayDiagraph = myDiagraph.split(/\r?\n/)
-      let arrayInput = Array.from(inputstr)
-      let currNode = '0'
-      let time = 0
-
-      // for each char in the input string
-      for (let x = 0; x < arrayInput.length; x++) {
-        // define checkers
-        let str1 = 'label=' + '"' + arrayInput[x] + '"'
-        let str2 = currNode + '->'
-        // for each element of the diagraph DO CHECK
-        for (let z = 0; z < arrayDiagraph.length; z++) {
-          if (arrayDiagraph[z].includes(str1) && arrayDiagraph[z].includes(str2)) {
-            let nodeLine = parseInt(currNode) + 2
-            arrayDiagraph[nodeLine] = arrayDiagraph[nodeLine].replace('blue', 'black')
-            // CHANGE PREV NODE
-            console.log('PREV NODE' + arrayDiagraph[nodeLine])
-            let renderChange = arrayDiagraph.join('\n')
-            time += 0
-            setTimeout(this.render, time, renderChange)
-            arrayDiagraph[z] = arrayDiagraph[z].replace('black', 'blue')
-            // CHANGE ARROW
-            console.log('ARROW' + arrayDiagraph[z])
-            // timer
-            renderChange = arrayDiagraph.join('\n')
-            time += 500
-            setTimeout(this.render, time, renderChange)
-            // render(renderChange)
-            let tempSplit = Array.from(arrayDiagraph[z])
-            currNode = parseInt(tempSplit[7])
-            // update curr node
-            nodeLine = currNode + 2
-            arrayDiagraph[nodeLine] = arrayDiagraph[nodeLine].replace('black', 'blue')
-            // CHANGE THIS NODE
-            console.log('THIS NODE' + arrayDiagraph[nodeLine])
-            // timer
-            renderChange = arrayDiagraph.join('\n')
-            time += 500
-            setTimeout(this.render, time, renderChange)
-            arrayDiagraph[z] = arrayDiagraph[z].replace('blue', 'black')
-            // CHANGE ARROW
-            console.log('After ARROW' + arrayDiagraph[z])
-            renderChange = arrayDiagraph.join('\n')
-            time += 1000
-            setTimeout(this.render, time, renderChange)
-          }
-        }
-      }
-    },
     pulseUp: function (key, dotscript) {
       console.log('in pulse up key is' + key)
       let t = d3.transition()
         .duration(500)
         .ease(d3.easeLinear)
-      // d3Graphviz.graphviz('#graph')
       d3.select('#graph').graphviz()
         .transition(t)
         .attributer(function (d) {
@@ -217,13 +183,19 @@ export default {
             d3.select(this)
             if (d.parent.attributes.id === key) {
               console.log('FOUND KEY NODE')
-              d.attributes.fill = '#75a1d0'
+              d.attributes.fill = 'dodgerblue'
               d.attributes.rx = 23
               d.attributes.ry = 23
             } else if (d.attributes.rx !== '22') {
               d.attributes.fill = 'white'
               d.attributes.rx = '18'
               d.attributes.ry = '18'
+            }
+          }
+          if (d.tag === 'text') {
+            d3.select(this)
+            if (d.parent.attributes.id === key) {
+              d.attributes.fill = 'white'
             }
           }
         })
@@ -253,52 +225,6 @@ export default {
       let key = 'node' + num.toString()
       console.log('CURRNODE KEY>> ' + currNode + ' is ' + key)
       return key
-    },
-    highlightNode: function (node, time, dotscipt) {
-      let key = this.getKey(node)
-      time += 1000
-      setTimeout(this.pulseUp, time, key)
-      time += 3000
-      setTimeout(this.pulseDown, time, key, dotscipt)
-    },
-    DFATrace2: function () {
-      let arrayDiagraph = this.myDotscript.split(/\r?\n/)
-      let currNode = '0'
-      let time = 0
-      // for each char in the input string
-      console.log(this.splitStr.length)
-      for (let x = 0; x < this.splitStr.length; x++) {
-        // define checkers
-        this.splitStr[x].isactive = true
-        let str1 = 'label=' + '"' + this.splitStr[x].char + '"'
-        let str2 = currNode + '->'
-        // for each element of the diagraph DO CHECK
-        for (let z = 0; z < this.fsm.numOfStates; z++) {
-          if (this.fsm.transitions[currNode][z] === this.splitStr[x].char) {
-            // HIHGLIGH ARROW
-            arrayDiagraph = this.highlightArrow(arrayDiagraph, str1, str2)
-            let renderChange = arrayDiagraph.join('\n')
-            time += 1000
-            setTimeout(this.render, time, renderChange)
-            // HIGHLIGHT NODE
-            // this.highlightNode(z, time, renderChange)
-            let key = this.getKey(z)
-            time += 1000
-            setTimeout(this.pulseUp, time, key, renderChange)
-            // transition fucntion that pulses node
-            currNode = z
-            // UNHIGHLIGHT ARROW
-            arrayDiagraph = this.unhighlightArrow(arrayDiagraph, str1, str2)
-            renderChange = arrayDiagraph.join('\n')
-            time += 1000
-            setTimeout(this.render, time, renderChange)
-            // pulse down
-            time += 1000
-            setTimeout(this.pulseDown, time, key, renderChange)
-          }
-        }
-        this.splitStr[x].isactive = false
-      }
     },
     DFATrace3: function () {
       let arrayDiagraph = this.myDotscript.split(/\r?\n/)
@@ -342,17 +268,37 @@ export default {
         this.splitStr[x].isactive = false
       }
     },
+    activateInputStr: function (x) {
+      // this.splitStr.forEach(function (item) {
+      //   item.isactive = false
+      // })
+      this.splitStr[x].isactive = true
+    },
+    startDFATrace: function () {
+      console.log('starting trace')
+    },
     DFATrace4: function () {
       console.log('DFA TRACE 4')
       let arrayDiagraph = this.myDotscript.split(/\r?\n/)
       let currNode = 0
       let nextNode = 0
       let time = 0
+      // let activate = 0
+      arrayDiagraph = this.highlightArrow(arrayDiagraph, 'start', '->')
+      let renderChange = arrayDiagraph.join('\n')
+      this.render(renderChange)
+      // this.startDFATrace()
+      this.pulseUp('node1', renderChange)
+      arrayDiagraph = this.unhighlightArrow(arrayDiagraph, 'start', '->')
+      renderChange = arrayDiagraph.join('\n')
+      time += 1500
+      setTimeout(this.render, time, renderChange)
+      setTimeout(this.pulseDown, 1000, 'node1', renderChange)
       // for each char in the input string
-      // console.log(this.splitStr.length)
       for (let x = 0; x < this.splitStr.length; x++) {
-        // define checkers
-        this.splitStr[x].isactive = true
+        // activate += 2000
+        // setTimeout(this.activateInputStr, activate, x)
+        // this.splitStr[x].isactive = true
         let str1 = 'label=' + '"' + this.splitStr[x].char + '"'
         let str2 = currNode + '->'
         console.log('CHECKING' + str1 + str2)
@@ -360,26 +306,24 @@ export default {
         for (let z = 0; z < this.fsm.numOfStates; z++) {
           if (this.fsm.transitions[currNode][z] === this.splitStr[x].char) {
             nextNode = z
-            console.log('reach here')
             break
           } else {
             nextNode = null
           }
         }
-        console.log(nextNode)
-        if (nextNode === null) {
+        if (nextNode === null && x < this.splitStr.length) {
           console.log('this aint it sis')
           return
         }
         // HIHGLIGH ARROW
         arrayDiagraph = this.highlightArrow(arrayDiagraph, str1, str2)
-        let renderChange = arrayDiagraph.join('\n')
-        time += 1000
+        renderChange = arrayDiagraph.join('\n')
+        time += 500
         setTimeout(this.render, time, renderChange)
         // HIGHLIGHT NODE
         // this.highlightNode(z, time, renderChange)
         let key = this.getKey(nextNode)
-        time += 1000
+        time += 250
         setTimeout(this.pulseUp, time, key, renderChange)
         // transition fucntion that pulses node
         currNode = nextNode
@@ -388,17 +332,15 @@ export default {
         renderChange = arrayDiagraph.join('\n')
         time += 1000
         setTimeout(this.render, time, renderChange)
-        // pulse down
-        time += 1000
         setTimeout(this.pulseDown, time, key, renderChange)
-        this.splitStr[x].isactive = false
+        // this.splitStr[x].isactive = false
       }
     },
     highlightArrow: function (array, str1, str2) {
       let x = 0
       while (x < array.length) {
         if (array[x].includes(str1) && array[x].includes(str2)) {
-          array[x] = array[x].replace('black', 'blue')
+          array[x] = array[x].replace('black', 'dodgerblue')
         }
         x++
       }
@@ -408,40 +350,11 @@ export default {
       let x = 0
       while (x < array.length) {
         if (array[x].includes(str1) && array[x].includes(str2)) {
-          array[x] = array[x].replace('blue', 'black')
+          array[x] = array[x].replace('dodgerblue', 'black')
         }
         x++
       }
       return array
-    },
-    buildDigraphArray: function () {
-      let digraphArray = []
-      let endStr = '\n}'
-      let transitions = this.defineTransitions()
-      transitions = transitions.split(/\r?\n/)
-      let dots = this.defineNodes() + '\n' + transitions[1] + endStr
-      transitions.shift()
-      transitions.shift()
-      digraphArray.push(dots)
-      dots = dots.split(/\r?\n/)
-      for (let x = 0; x < this.fsm.numOfStates; x++) {
-        dots.pop()
-        let str1 = x + '->'
-        let tempTransitions = transitions.filter(item => item.includes(str1))
-        transitions = transitions.filter(item => !item.includes(str1))
-        for (let y = 0; y < tempTransitions.length; y++) {
-          dots.push(tempTransitions[y])
-        }
-        dots.push('}')
-        let tempDigraph = dots.join('\n')
-        digraphArray.push(tempDigraph)
-      }
-      this.digraphArray = digraphArray
-      let time = 1000
-      for (let z = 0; z < this.digraphArray.length; z++) {
-        setTimeout(this.renderT, time, digraphArray[z])
-        time += 2000
-      }
     },
     renderBuild: function (dotIndex) {
       if (dotIndex === this.digraphArray.length) {
