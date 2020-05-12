@@ -329,6 +329,5 @@ export default {
     background-color: white ;
     border: 2px solid aliceblue;
     border-radius: 5px;
-    margin-top: 2%;
 }
 </style>
