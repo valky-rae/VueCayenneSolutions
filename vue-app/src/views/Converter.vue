@@ -5,18 +5,25 @@
             <h1>Cayenne Converter </h1>
         </div>
         <div>
-          <span class="form-control">
-            <input class="inputs" type="text" v-model="regex">
-            <input class="inputs" type="text" v-model="inputStr" v-on:keyup="split2()">
-                <button v-on:click="convert()"> CONVERT </button>
-                <button class="buttonGradient" v-on:click="DFATrace4()"> TRACE </button>
+        <span style="display:flex">
+          <div class="icon-bar">
+            <input placeholder="Enter REGEX" class="inputs" type="text" v-model="regex">
+              <button v-on:click="convertDFA()"> DFA </button>
+              <button v-on:click="convertNFA()"> NFA </button>
+            <input placeholder="Enter String" class="inputs" type="text" v-model="inputStr" v-on:keyup="split2()">
+              <button class="buttonGradient" v-on:click="trace()"> TRACE </button>
+              <button class="buttonGradient" v-on:click="print()"> print </button>
+          </div>
+          <div id="graph" class="prettygraph" style="text-align: center;" v-on:click.capture="onNodeClick()"></div>
+         </span>
+        <!--  <span class="form-control">
             <p class="hint"> Enter Regex Here</p>
             <p>Message is: {{ inputStr }}</p>
           </span>
-        </div>
         <div id="graph" class="prettygraph" style="text-align: center;"></div>
         <Carousel>
-        </Carousel>
+        </Carousel> -->
+        </div>
     </div>
 </transition>
 </template>
@@ -34,13 +41,26 @@ export default {
       myDotscript: 'I am EMPTY',
       inputStr: '',
       splitStr: [ ],
-      digraphArray: []
+      digraphArray: [],
+      allPaths: [],
+      yesPaths: []
     }
   },
   components: {
     Carousel
   },
   methods: {
+    print: function () {
+      console.log(this.fsm)
+      console.log(this.myDotscript)
+      this.allPaths.forEach(function (item) {
+        console.log(item)
+      })
+      console.log('YES PATHS')
+      this.yesPaths.forEach(function (item) {
+        console.log(item)
+      })
+    },
     split2: function () {
       let timeout = setTimeout(() => {
         while (this.splitStr.length > 0) {
@@ -86,10 +106,19 @@ export default {
       //   .transition(t)
       //   .renderDot(this.myDotscript)
     },
-    convert: function () {
+    convertDFA: function () {
       let regParser = require('automata.js')
       let parser = new regParser.RegParser(this.regex)
       this.fsm = parser.parseToDFA()
+      this.dotscript = this.fsm.toDotScript()
+      this.myDotscript = this.defineMyDotscipt()
+      // this.render(this.myDotscript)
+      this.buildDigraphArray()
+    },
+    convertNFA: function () {
+      let regParser = require('automata.js')
+      let parser = new regParser.RegParser(this.regex)
+      this.fsm = parser.parseToNFA()
       this.dotscript = this.fsm.toDotScript()
       this.myDotscript = this.defineMyDotscipt()
       // this.render(this.myDotscript)
@@ -208,46 +237,6 @@ export default {
       console.log('CURRNODE KEY>> ' + currNode + ' is ' + key)
       return key
     },
-    DFATrace3: function () {
-      let arrayDiagraph = this.myDotscript.split(/\r?\n/)
-      let currNode = 0
-      let nextNode = 0
-      let time = 0
-      // for each char in the input string
-      for (let x = 0; x < this.splitStr.length; x++) {
-        // define checkers
-        this.splitStr[x].isactive = true
-        let str1 = 'label=' + '"' + this.splitStr[x].char + '"'
-        let str2 = currNode + '->'
-        console.log('CHECKING' + str1 + str2)
-        // for each element of the diagraph DO CHECK
-        for (let z = 0; z < this.fsm.numOfStates; z++) {
-          if (this.fsm.transitions[currNode][z] === this.splitStr[x].char) {
-            nextNode = z
-          }
-        }
-        // HIHGLIGH ARROW
-        arrayDiagraph = this.highlightArrow(arrayDiagraph, str1, str2)
-        let renderChange = arrayDiagraph.join('\n')
-        time += 1000
-        setTimeout(this.render, time, renderChange)
-        // HIGHLIGHT NODE
-        let key = this.getKey(nextNode)
-        time += 1000
-        setTimeout(this.pulseUp, time, key, renderChange)
-        // transition fucntion that pulses node
-        currNode = nextNode
-        // UNHIGHLIGHT ARROW
-        arrayDiagraph = this.unhighlightArrow(arrayDiagraph, str1, str2)
-        renderChange = arrayDiagraph.join('\n')
-        time += 1000
-        setTimeout(this.render, time, renderChange)
-        // pulse down
-        time += 1000
-        setTimeout(this.pulseDown, time, key, renderChange)
-        this.splitStr[x].isactive = false
-      }
-    },
     activateInputStr: function (x) {
       // this.splitStr.forEach(function (item) {
       //   item.isactive = false
@@ -333,12 +322,97 @@ export default {
     },
     successTrace: function () {
       alert('YOU PASSED')
+    },
+    findPaths: function (currNode, location, path) {
+      console.log('FIND PATHS FUNCTION')
+      if (this.inputStr.length === location || this.fsm.transitions[currNode] === undefined) {
+        this.allPaths.push(path)
+        let end = path.split('').reverse()[0]
+        if (this.fsm.acceptStates.includes(end) && path.length >= this.inputStr.length && location >= this.inputStr.length) {
+          this.yesPaths.push(path)
+        }
+      }
+      if (this.fsm.transitions[currNode] !== undefined) {
+        for (let x = 0; x < this.fsm.numOfStates; x++) {
+          let newpath = path + x.toString()
+          // IF REGULAR TRANSITION
+          if (this.fsm.transitions[currNode][x] === this.inputStr[location] && this.fsm.transitions[currNode][x] !== undefined) {
+            this.findPaths(x, location + 1, newpath)
+          }
+          // IF EPSALOM LABAL
+          if (this.fsm.transitions[currNode][x] === 'ε' && this.fsm.transitions[currNode][x] !== undefined) {
+            this.findPaths(x, location, newpath)
+          }
+        }
+      }
+    },
+    trace: function () {
+      if (this.fsm.type === 'NFA') {
+        this.NFATrace()
+      } else {
+        this.DFATrace4()
+      }
+    },
+    NFATrace: function () {
+      console.log('NFA TRACING')
+      this.findPaths(0, 0, 0)
+      setTimeout(this.print(), 5000)
+      if (this.yesPaths.length !== 0) {
+        this.renderNFATrace(this.yesPaths[0])
+      } else {
+        this.renderNFATrace(this.allPaths[0])
+      }
+    },
+    renderNFATrace: function (mypath) {
+      let path = mypath.split('')
+      let arrayDiagraph = this.myDotscript.split(/\r?\n/)
+      let currNode = 0
+      let nextNode = 0
+      let time = 0
+      // START TRACE
+      arrayDiagraph = this.highlightArrow(arrayDiagraph, 'start', '->')
+      let renderChange = arrayDiagraph.join('\n')
+      this.render(renderChange)
+      this.pulseUp('node1', renderChange)
+      arrayDiagraph = this.unhighlightArrow(arrayDiagraph, 'start', '->')
+      renderChange = arrayDiagraph.join('\n')
+      time += 1500
+      setTimeout(this.render, time, renderChange)
+      setTimeout(this.pulseDown, 1000, 'node1', renderChange)
+      // for each char in the path string
+      for (let x = 0; x < path.length; x++) {
+        currNode = path[x]
+        nextNode = path[x + 1]
+        let str1 = currNode + '->' + nextNode
+        // HIHGLIGH ARROW
+        arrayDiagraph = this.highlightArrow(arrayDiagraph, str1, 'label')
+        renderChange = arrayDiagraph.join('\n')
+        time += 500
+        setTimeout(this.render, time, renderChange)
+        // HIGHLIGHT NODE
+        let key = this.getKey(nextNode)
+        time += 250
+        setTimeout(this.pulseUp, time, key, renderChange)
+        // UNHIGHLIGHT ARROW
+        arrayDiagraph = this.unhighlightArrow(arrayDiagraph, str1, 'label')
+        renderChange = arrayDiagraph.join('\n')
+        time += 1000
+        setTimeout(this.render, time, renderChange)
+        // PULSE DOWN
+        setTimeout(this.pulseDown, time, key, renderChange)
+      }
+    },
+    displayTable: function () {
+      console.log('DISPLAYING TABLE')
     }
   }
 }
 </script>
 
 <style scoped>
+button {
+  margin: 15px;
+}
 .bouncey{
   animation: none;
 }
@@ -350,19 +424,36 @@ export default {
 .form-control {
     margin-top: 40px;
     display: inline-block;
-    width: 98%;
+    width: 10%;
     padding: 10px;
     color:#75a1d0;
     background-color: transparent;
     /* cursor: not-allowed; */
 }
 .inputs{
-    font-size: 1.2em;
+    /* font-size: 1.2em; */
     line-height: 1.2em;
-    border-color: #36648B;
+    border-color: #bad0e7;
     box-shadow: 3px 3px white;
     border-radius: 20px;
-    padding:5px;
+    padding:8px;
+    width: 125px;
+}
+.icon-bar {
+    margin-top: 2%;
+  width: 200px; /* Set a specific width */
+  /* background-color: white ; */
+  border: 2px solid aliceblue;
+  border-radius: 5px;
+}
+.icon-bar a {
+  display: block; /* Make the links appear below each other instead of side-by-side */
+  text-align: center; /* Center-align text */
+  padding: 20px; /* Add some padding */
+  transition: all 0.3s ease; /* Add transition for hover effects */
+  color: white; /* White text color */
+  font-size: 36px; /* Increased font-size */
+  margin-top: 10px;
 }
 .hint{
     font-size: 0.9em;
@@ -375,7 +466,6 @@ export default {
     height: 400px;
     width: 100%;
     background-color: white ;
-    /* background-color: transparent; */
     border: 2px solid aliceblue;
     border-radius: 5px;
     margin-top: 2%;
