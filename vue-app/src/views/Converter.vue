@@ -7,22 +7,15 @@
         <div>
         <span style="display:flex">
           <div class="icon-bar">
-            <input placeholder="Enter REGEX" class="inputs" type="text" v-model="regex">
+            <input placeholder="Enter REGEX" class="inputs" type="text" v-model="regex" v-on:keyup="clearPath()">
               <button v-on:click="convertDFA()"> DFA </button>
               <button v-on:click="convertNFA()"> NFA </button>
-            <input placeholder="Enter String" class="inputs" type="text" v-model="inputStr" v-on:keyup="split2()">
-              <button class="buttonGradient" v-on:click="trace()"> TRACE </button>
-              <button class="buttonGradient" v-on:click="print()"> print </button>
+            <input placeholder="Enter String" class="inputs" type="text" v-model="inputStr" v-on:keyup="split2(), clearPath()">
+              <button class="buttonGradient" v-on:click="trace(), clearPath()"> TRACE </button>
+              <button class="buttonGradient" v-on:click="print(), clearPath()"> print </button>
           </div>
           <div id="graph" class="prettygraph" style="text-align: center;" v-on:click.capture="onNodeClick()"></div>
          </span>
-        <!--  <span class="form-control">
-            <p class="hint"> Enter Regex Here</p>
-            <p>Message is: {{ inputStr }}</p>
-          </span>
-        <div id="graph" class="prettygraph" style="text-align: center;"></div>
-        <Carousel>
-        </Carousel> -->
         </div>
     </div>
 </transition>
@@ -50,6 +43,15 @@ export default {
     Carousel
   },
   methods: {
+    clearPath: function () {
+      while (this.allPaths.length > 0) {
+        this.allPaths.pop()
+      }
+      while (this.yesPaths.length > 0) {
+        this.yesPaths.pop()
+      }
+      this.allPaths.push('0')
+    },
     print: function () {
       console.log(this.fsm)
       console.log(this.myDotscript)
@@ -112,8 +114,8 @@ export default {
       this.fsm = parser.parseToDFA()
       this.dotscript = this.fsm.toDotScript()
       this.myDotscript = this.defineMyDotscipt()
-      // this.render(this.myDotscript)
-      this.buildDigraphArray()
+      this.render(this.myDotscript)
+      // this.buildDigraphArray()
     },
     convertNFA: function () {
       let regParser = require('automata.js')
@@ -121,8 +123,8 @@ export default {
       this.fsm = parser.parseToNFA()
       this.dotscript = this.fsm.toDotScript()
       this.myDotscript = this.defineMyDotscipt()
-      // this.render(this.myDotscript)
-      this.buildDigraphArray()
+      this.render(this.myDotscript)
+      // this.buildDigraphArray()
     },
     buildDigraphArray: function () {
       let digraphArray = []
@@ -232,7 +234,7 @@ export default {
         .renderDot(dotscript)
     },
     getKey: function (currNode) {
-      let num = currNode + 1
+      let num = parseInt(currNode) + 1
       let key = 'node' + num.toString()
       console.log('CURRNODE KEY>> ' + currNode + ' is ' + key)
       return key
@@ -295,7 +297,7 @@ export default {
         setTimeout(this.render, time, renderChange)
         setTimeout(this.pulseDown, time, key, renderChange)
       }
-      this.sucessTrace()
+      this.successTrace()
     },
     highlightArrow: function (array, str1, str2) {
       let x = 0
@@ -318,10 +320,10 @@ export default {
       return array
     },
     failTrace: function () {
-      alert('YOU FAILED')
+      // alert('YOU FAILED')
     },
     successTrace: function () {
-      alert('YOU PASSED')
+      // alert('YOU PASSED')
     },
     findPaths: function (currNode, location, path) {
       console.log('FIND PATHS FUNCTION')
@@ -347,7 +349,9 @@ export default {
       }
     },
     trace: function () {
-      if (this.fsm.type === 'NFA') {
+      if (this.inputStr.length === 0) {
+        alert('Please enter an input string')
+      } else if (this.fsm.type === 'NFA') {
         this.NFATrace()
       } else {
         this.DFATrace4()
