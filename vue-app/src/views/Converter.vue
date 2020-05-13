@@ -35,11 +35,11 @@ import Carousel from '../views/Carousel'
 export default {
   data: function () {
     return {
-      regex: '101',
+      regex: 'AB(CD)*',
       fsm: 'empty fsm',
       dotscript: 'empty ds',
       myDotscript: 'I am EMPTY',
-      inputStr: '',
+      inputStr: 'ABCD',
       splitStr: [ ],
       digraphArray: [],
       allPaths: [],
@@ -62,6 +62,13 @@ export default {
       })
     },
     split2: function () {
+      while (this.allPaths.length > 0) {
+        this.allPaths.pop()
+      }
+      while (this.yesPaths.length > 0) {
+        this.yesPaths.pop()
+      }
+      this.allPaths.push('0')
       let timeout = setTimeout(() => {
         while (this.splitStr.length > 0) {
           this.splitStr.pop()
@@ -112,8 +119,8 @@ export default {
       this.fsm = parser.parseToDFA()
       this.dotscript = this.fsm.toDotScript()
       this.myDotscript = this.defineMyDotscipt()
-      // this.render(this.myDotscript)
-      this.buildDigraphArray()
+      this.render(this.myDotscript)
+      // this.buildDigraphArray()
     },
     convertNFA: function () {
       let regParser = require('automata.js')
@@ -121,8 +128,44 @@ export default {
       this.fsm = parser.parseToNFA()
       this.dotscript = this.fsm.toDotScript()
       this.myDotscript = this.defineMyDotscipt()
-      // this.render(this.myDotscript)
-      this.buildDigraphArray()
+      this.removal()
+      this.render(this.myDotscript)
+      // this.buildDigraphArray()
+    },
+    removal: function () {
+      let remove = []
+      for (let x = 0; x < this.fsm.numOfStates; x++) {
+        if (this.fsm.transitions[x] === undefined) {
+          remove.push({flag: false, node: x})
+        }
+      }
+      for (let x = 0; x < remove.length; x++) {
+        for (let y = 0; y < this.fsm.numOfStates; y++) {
+          let z = remove[x].node
+          if (this.fsm.transitions[y] !== undefined && this.fsm.transitions[y][z] !== undefined) {
+            remove[x].flag = true
+          }
+        }
+      }
+      for (let x = 0; x < remove.length; x++) {
+        if (remove[x].flag === true) {
+          remove.splice(x, 1)
+        }
+      }
+      console.log('REMOVE TGHESE')
+      console.log(remove)
+      let arrayDiagraph = this.myDotscript.split(/\r?\n/)
+      for (let x = 0; x < remove.length; x++) {
+        let str1 = 'node '
+        let str2 = remove[x].node + ';'
+        for (let y = 0; y < arrayDiagraph.length; y++) {
+          if (arrayDiagraph[y].includes(str1) && arrayDiagraph[y].includes(str2)) {
+            console.log('removing this line')
+            arrayDiagraph.splice(y, 1)
+          }
+        }
+      }
+      this.myDotscript = arrayDiagraph.join('\n')
     },
     buildDigraphArray: function () {
       let digraphArray = []
@@ -237,6 +280,12 @@ export default {
       console.log('CURRNODE KEY>> ' + currNode + ' is ' + key)
       return key
     },
+    getKeyNFA: function (currNode) {
+      let num = parseInt(currNode) + 1
+      let key = 'node' + num.toString()
+      console.log('CURRNODE KEY>> ' + currNode + ' is ' + key)
+      return key
+    },
     activateInputStr: function (x) {
       // this.splitStr.forEach(function (item) {
       //   item.isactive = false
@@ -347,7 +396,9 @@ export default {
       }
     },
     trace: function () {
-      if (this.fsm.type === 'NFA') {
+      if (this.inputStr.length === 0) {
+        alert('Insert a string to trace')
+      } else if (this.fsm.type === 'NFA') {
         this.NFATrace()
       } else {
         this.DFATrace4()
@@ -360,11 +411,16 @@ export default {
       if (this.yesPaths.length !== 0) {
         this.renderNFATrace(this.yesPaths[0])
       } else {
+        let filtered = this.allPaths.filter(item => item.indexOf(item.length - 1) === '4')
+        console.log('FILTERED IS')
+        console.log(filtered)
         this.renderNFATrace(this.allPaths[0])
       }
+      this.displayTable()
     },
     renderNFATrace: function (mypath) {
       let path = mypath.split('')
+      // console.log('0 INDEX OF MYPATH' + mypath.indexOf(0))
       let arrayDiagraph = this.myDotscript.split(/\r?\n/)
       let currNode = 0
       let nextNode = 0
@@ -380,7 +436,7 @@ export default {
       setTimeout(this.render, time, renderChange)
       setTimeout(this.pulseDown, 1000, 'node1', renderChange)
       // for each char in the path string
-      for (let x = 0; x < path.length; x++) {
+      for (let x = 0; x <= path.length; x++) {
         currNode = path[x]
         nextNode = path[x + 1]
         let str1 = currNode + '->' + nextNode
@@ -390,7 +446,7 @@ export default {
         time += 500
         setTimeout(this.render, time, renderChange)
         // HIGHLIGHT NODE
-        let key = this.getKey(nextNode)
+        let key = this.getKeyNFA(nextNode)
         time += 250
         setTimeout(this.pulseUp, time, key, renderChange)
         // UNHIGHLIGHT ARROW
@@ -401,6 +457,12 @@ export default {
         // PULSE DOWN
         setTimeout(this.pulseDown, time, key, renderChange)
       }
+      // while (this.allPaths.length > 0) {
+      //   this.allPaths.pop()
+      // }
+      // while (this.yesPaths.length > 0) {
+      //   this.yesPaths.pop()
+      // }
     },
     displayTable: function () {
       console.log('DISPLAYING TABLE')
