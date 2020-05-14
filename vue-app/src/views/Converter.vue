@@ -18,10 +18,7 @@
          </span>
          <div class="form-popup" id="myForm" style="background-color:aliceblue" v-on:click.capture="stopJump()">
           <form class="form-container" id="labelForm">
-            <label><b>New Label</b></label>
-            <input type="text" placeholder="Enter New Label" name="new_label" required>
-            <button v-on:click="newLabel()"> Change </button>
-            <button v-on:click="closeForm()">Close</button>
+            <label><b> {{comment}} </b></label>
           </form>
         </div>
         </div>
@@ -42,7 +39,8 @@ export default {
       splitStr: [ ],
       digraphArray: [],
       allPaths: [],
-      yesPaths: []
+      yesPaths: [],
+      comment: 'Congratulations!'
     }
   },
   methods: {
@@ -85,31 +83,19 @@ export default {
     },
     render: function (dotscript) {
       d3Graphviz.graphviz('#graph')
-        // .transition(t)
         .attributer(function (d) {
-
         })
         .renderDot(dotscript)
     },
     renderT: function (dotscript) {
       let t = d3.transition()
-        .duration(1500)
+        .duration(500)
         .ease(d3.easeLinear)
       d3Graphviz.graphviz('#graph')
         .transition(t)
         .attributer(function (d) {
         })
         .renderDot(dotscript)
-      // METHOD 2 RENDER
-      // d3.select('#graph').graphviz()
-      //   .attributer(function (d) {
-      //     if (d.tag === 'path') {
-      //       d3.select(this)
-      //       console.log(d)
-      //     }
-      //   })
-      //   .transition(t)
-      //   .renderDot(this.myDotscript)
     },
     convertDFA: function () {
       let regParser = require('automata.js')
@@ -126,7 +112,7 @@ export default {
       this.fsm = parser.parseToNFA()
       this.dotscript = this.fsm.toDotScript()
       this.myDotscript = this.defineMyDotscipt()
-      this.removal()
+      // this.removal()
       this.render(this.myDotscript)
       // this.buildDigraphArray()
     },
@@ -189,10 +175,10 @@ export default {
         digraphArray.push(tempDigraph)
       }
       this.digraphArray = digraphArray
-      let time = 1000
+      let time = 500
       for (let z = 0; z < this.digraphArray.length; z++) {
         setTimeout(this.renderT, time, digraphArray[z])
-        time += 2000
+        time += 1000
       }
     },
     defineNodes: function () {
@@ -338,7 +324,7 @@ export default {
       this.pulseUp('node1', renderChange)
       arrayDiagraph = this.unhighlightArrow(arrayDiagraph, 'start', '->')
       renderChange = arrayDiagraph.join('\n')
-      time += 1500
+      time += 600
       setTimeout(this.render, time, renderChange)
       setTimeout(this.pulseDown, 1000, 'node1', renderChange)
       // for each char in the input string
@@ -362,11 +348,11 @@ export default {
         // HIHGLIGH ARROW
         arrayDiagraph = this.highlightArrow(arrayDiagraph, str1, str2)
         renderChange = arrayDiagraph.join('\n')
-        time += 500
+        time += 300
         setTimeout(this.render, time, renderChange)
         // HIGHLIGHT NODE
         let key = this.getKey(nextNode)
-        time += 250
+        time += 150
         setTimeout(this.pulseUp, time, key, renderChange)
         // transition fucntion that pulses node
         currNode = nextNode
@@ -398,12 +384,6 @@ export default {
         x++
       }
       return array
-    },
-    failTrace: function () {
-      // alert('YOU FAILED')
-    },
-    successTrace: function () {
-      // alert('YOU PASSED')
     },
     findPaths: function (currNode, location, path) {
       console.log('FIND PATHS FUNCTION')
@@ -444,7 +424,7 @@ export default {
       if (this.yesPaths.length !== 0) {
         this.renderNFATrace(this.yesPaths[0], true)
       } else {
-        this.renderNFATrace(this.allPaths[0], false)
+        this.renderNFATrace(this.allPaths[1], false)
       }
     },
     renderNFATrace: function (mypath, flag) {
@@ -460,7 +440,7 @@ export default {
       this.pulseUp('node1', renderChange)
       arrayDiagraph = this.unhighlightArrow(arrayDiagraph, 'start', '->')
       renderChange = arrayDiagraph.join('\n')
-      time += 1500
+      time += 600
       setTimeout(this.render, time, renderChange)
       setTimeout(this.pulseDown, 1000, 'node1', renderChange)
       // for each char in the path string
@@ -471,16 +451,16 @@ export default {
         // HIHGLIGH ARROW
         arrayDiagraph = this.highlightArrow(arrayDiagraph, str1, 'label')
         renderChange = arrayDiagraph.join('\n')
-        time += 500
+        time += 300
         setTimeout(this.render, time, renderChange)
         // HIGHLIGHT NODE
         let key = this.getKey(nextNode)
-        time += 250
+        time += 150
         setTimeout(this.pulseUp, time, key, renderChange)
         // UNHIGHLIGHT ARROW
         arrayDiagraph = this.unhighlightArrow(arrayDiagraph, str1, 'label')
         renderChange = arrayDiagraph.join('\n')
-        time += 1000
+        time += 600
         setTimeout(this.render, time, renderChange)
         // PULSE DOWN
         setTimeout(this.pulseDown, time, key, renderChange)
@@ -492,25 +472,32 @@ export default {
     },
     checkerDFA: function (time, node) {
       if (this.fsm.acceptStates.includes(node)) {
-        alert('accepted')
+        this.comment = 'String Accepted! :)'
+        this.openForm()
         setTimeout(this.pulseUpEnd, time, 'green')
         setTimeout(this.pulseDownEnd, time + 2000)
+        setTimeout(this.closeForm, time + 4000)
       } else {
-        alert('not accepted')
+        this.comment = 'Not Accepted :('
         this.openForm()
         setTimeout(this.pulseUpEnd, time, 'red')
         setTimeout(this.pulseDownEnd, time + 2000)
+        setTimeout(this.closeForm, time + 4000)
       }
     },
     checkerNFA: function (time, flag) {
       if (flag) {
-        alert('accepted')
+        this.comment = 'String Accepted! :)'
+        this.openForm()
         setTimeout(this.pulseUpEnd, time, 'lime')
         setTimeout(this.pulseDownEnd, time + 2000)
+        setTimeout(this.closeForm, time + 4000)
       } else {
-        alert('not accepted')
+        this.comment = 'Not Accepted :('
+        this.openForm()
         setTimeout(this.pulseUpEnd, time, 'red')
         setTimeout(this.pulseDownEnd, time + 2000)
+        setTimeout(this.closeForm, time + 4000)
       }
     },
     openForm () {
@@ -534,6 +521,10 @@ export default {
   border: 3px solid #f1f1f1;
   z-index: 9;
   background-color: aliceblue ;
+}
+.form-container {
+  padding-top: 20px;
+  padding-bottom: 20px;
 }
 button {
   margin: 15px;
@@ -588,7 +579,7 @@ button {
 }
 .prettygraph{
     display: block;
-    height: 350px;
+    height: 375px;
     width: 100%;
     background-color: white ;
     border: 2px solid aliceblue;
