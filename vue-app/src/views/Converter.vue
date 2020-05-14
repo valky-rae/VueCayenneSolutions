@@ -12,23 +12,43 @@
               <button v-on:click="convertNFA()"> NFA </button>
             <input placeholder="Enter String" class="inputs" type="text" v-model="inputStr" v-on:keyup="split2(), clearPath()">
               <button class="buttonGradient" v-on:click="trace(), clearPath()"> TRACE </button>
-              <!-- <button class="buttonGradient" v-on:click="print(), clearPath()"> print </button> -->
+              <button class="buttonGradient" v-on:click="openPaths()" style="font-size: 12px"> Show All Paths </button>
           </div>
           <div id="graph" class="prettygraph" style="text-align: center;" v-on:click.capture="onNodeClick()"></div>
          </span>
-         <div class="form-popup" id="myForm" style="background-color:aliceblue" v-on:click.capture="stopJump()">
+         <div class="form-popup" id="myForm">
           <form class="form-container" id="labelForm">
             <label><b> {{comment}} </b></label>
           </form>
+        </div>
+        <div>
+          <table id='myTable'>
+              <thead class='tHeader'>
+                <tr>
+                    <th>Status</th>
+                    <th>Path of Nodes</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-bind:key='path' v-for="path in allPaths">
+                    <td> Yes </td>
+                    <td>{{path}}</td>
+                </tr>
+            </tbody>
+          </table>
         </div>
         </div>
     </div>
 </transition>
 </template>
 <script>
+import MyTable from '../views/Table'
 import * as d3Graphviz from 'd3-graphviz'
 import * as d3 from 'd3'
 export default {
+  components: {
+    MyTable
+  },
   data: function () {
     return {
       regex: '101',
@@ -38,7 +58,7 @@ export default {
       inputStr: '',
       splitStr: [ ],
       digraphArray: [],
-      allPaths: [],
+      allPaths: ['0', '12345678', '23432', '023'],
       yesPaths: [],
       comment: 'Congratulations!'
     }
@@ -507,12 +527,33 @@ export default {
     },
     closeForm () {
       document.getElementById('myForm').style.display = 'none'
+    },
+    openPaths () {
+      var d = document.getElementById('myTable')
+      d.style.display = 'block'
+      d.className = 'animated pulse'
+    },
+    closePaths () {
+      document.getElementById('myTable').style.display = 'none'
     }
   }
 }
 </script>
 
 <style scoped>
+#myTable {
+    background-color: aliceblue;
+    border-radius: 5px;
+    width: 825px;
+    text-align: center;
+    margin-left: 17%;
+    display: none;
+    border: 3px solid #f1f1f1;
+    z-index: 9;
+}
+td {
+  padding-right: 15px;
+}
 .form-popup {
   display: none;
   position: fixed;
@@ -525,6 +566,7 @@ export default {
 .form-container {
   padding-top: 20px;
   padding-bottom: 20px;
+  background-color: aliceblue ;
 }
 button {
   margin: 15px;

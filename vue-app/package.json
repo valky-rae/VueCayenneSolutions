@@ -22,6 +22,7 @@
     "vue-burger-menu": "^2.0.5",
     "vue-carousel-3d": "^0.2.0",
     "vue-google-signin-button-directive": "^1.0.3",
+    "vue-materialize-datatable": "^1.0.2",
     "vue-router": "^3.0.1"
   },
   "devDependencies": {
