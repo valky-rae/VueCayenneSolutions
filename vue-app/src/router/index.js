@@ -4,6 +4,7 @@ import About from '@/views/About'
 import Canvas from '@/views/Canvas'
 import Converter from '@/views/Converter'
 import Kyle from '@/views/Kyle'
+import Acknowledgements from '@/views/Acknowledgements'
 
 Vue.use(Router)
 
@@ -28,6 +29,11 @@ export default new Router({
       path: '/kyle',
       name: 'Kyle',
       component: Kyle
+    },
+    {
+      path: '/Ack',
+      name: 'Acknowledgements',
+      component: Acknowledgements
     }
   ]
 })

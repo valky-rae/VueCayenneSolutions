@@ -21,8 +21,12 @@
         <button v-on:click="deleteG()">
           <img src="../assets/delete.png" alt="delete" />
         </button>
+        <button id="saveme" v-on:click="save()">
+          <img src="../assets/save.png" alt="save" />
+        </button>
       </div>
       <div id="graph" class="prettygraph" style="text-align: center;" v-on:click.capture="onNodeClick()"></div>
+      <image id="theImage" />
     </span>
     <div class="form-popup" id="myForm" style="background-color:aliceblue" v-on:click.capture="stopJump()">
       <br>
@@ -283,6 +287,14 @@ export default {
       this.editDot[nName] = arr1[0] + '[label=' + newL + ']'
       this.convert()
       this.closeForm()
+    },
+    save () {
+      var canvas = document.getElementById('graph')
+      var button = document.getElementById('saveme')
+      var dataURL = canvas.toDataURL('image/png')
+      document.getElementById('theImage').src = dataURL
+      window.location.href = dataURL
+      button.href = dataURL
     }
   }
 }
@@ -329,6 +341,5 @@ export default {
     background-color: white ;
     border: 2px solid aliceblue;
     border-radius: 5px;
-    margin-top: 2%;
 }
 </style>
