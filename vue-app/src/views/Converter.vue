@@ -45,9 +45,6 @@ export default {
       yesPaths: []
     }
   },
-  components: {
-    Carousel
-  },
   methods: {
     clearPath: function () {
       while (this.allPaths.length > 0) {
