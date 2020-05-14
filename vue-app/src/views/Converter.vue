@@ -123,8 +123,45 @@ export default {
       this.fsm = parser.parseToNFA()
       this.dotscript = this.fsm.toDotScript()
       this.myDotscript = this.defineMyDotscipt()
+      this.removal()
       this.render(this.myDotscript)
       // this.buildDigraphArray()
+    },
+    removal: function () {
+      let remove = []
+      for (let x = 0; x < this.fsm.numOfStates; x++) {
+        if (this.fsm.transitions[x] === undefined) {
+          remove.push({flag: false, node: x})
+        }
+      }
+      for (let x = 0; x < remove.length; x++) {
+        for (let y = 0; y < this.fsm.numOfStates; y++) {
+          let z = remove[x].node
+          if (this.fsm.transitions[y] !== undefined && this.fsm.transitions[y][z] !== undefined) {
+            remove[x].flag = true
+          }
+        }
+      }
+      for (let x = 0; x < remove.length; x++) {
+        if (remove[x].flag === true) {
+          remove.splice(x, 1)
+        }
+      }
+      console.log('REMOVE TGHESE')
+      console.log(remove)
+      let arrayDiagraph = this.myDotscript.split(/\r?\n/)
+      for (let x = 0; x < remove.length; x++) {
+        let str1 = 'node '
+        let str2 = remove[x].node.toString() + ';'
+        for (let y = 0; y < arrayDiagraph.length; y++) {
+          if (arrayDiagraph[y].includes(str1) && arrayDiagraph[y].includes(str2)) {
+            console.log('removing this line')
+            console.log(arrayDiagraph[y])
+            arrayDiagraph.splice(y, 1)
+          }
+        }
+      }
+      this.myDotscript = arrayDiagraph.join('\n')
     },
     buildDigraphArray: function () {
       let digraphArray = []
@@ -233,6 +270,46 @@ export default {
         })
         .renderDot(dotscript)
     },
+    pulseUpEnd: function (key) {
+      console.log('RED PULSE UP')
+      let t = d3.transition()
+        .duration(500)
+        .ease(d3.easeLinear)
+      d3.select('#graph').graphviz()
+        .transition(t)
+        .attributer(function (d) {
+          if (d.tag === 'ellipse') {
+            d3.select(this)
+            d.attributes.fill = key
+            d.attributes.rx = 23
+            d.attributes.ry = 23
+          }
+          if (d.tag === 'text') {
+            d3.select(this)
+            d.attributes.fill = 'white'
+          }
+        })
+        .renderDot(this.myDotscript)
+    },
+    pulseDownEnd: function () {
+      console.log('RED PULSE DOWN')
+      let t = d3.transition()
+        .duration(500)
+        .ease(d3.easeLinear)
+      d3Graphviz.graphviz('#graph')
+        .transition(t)
+        .attributer(function (d) {
+          if (d.tag === 'ellipse') {
+            d3.select(this)
+            if (d.attributes.rx !== '22') {
+              d.attributes.fill = 'whitesmoke'
+              d.attributes.rx = '18'
+              d.attributes.ry = '18'
+            }
+          }
+        })
+        .renderDot(this.myDotscript)
+    },
     getKey: function (currNode) {
       let num = parseInt(currNode) + 1
       let key = 'node' + num.toString()
@@ -297,7 +374,7 @@ export default {
         setTimeout(this.render, time, renderChange)
         setTimeout(this.pulseDown, time, key, renderChange)
       }
-      this.successTrace()
+      this.checkerDFA(time, currNode)
     },
     highlightArrow: function (array, str1, str2) {
       let x = 0
@@ -362,12 +439,12 @@ export default {
       this.findPaths(0, 0, 0)
       setTimeout(this.print(), 5000)
       if (this.yesPaths.length !== 0) {
-        this.renderNFATrace(this.yesPaths[0])
+        this.renderNFATrace(this.yesPaths[0], true)
       } else {
-        this.renderNFATrace(this.allPaths[0])
+        this.renderNFATrace(this.allPaths[0], false)
       }
     },
-    renderNFATrace: function (mypath) {
+    renderNFATrace: function (mypath, flag) {
       let path = mypath.split('')
       let arrayDiagraph = this.myDotscript.split(/\r?\n/)
       let currNode = 0
@@ -405,9 +482,32 @@ export default {
         // PULSE DOWN
         setTimeout(this.pulseDown, time, key, renderChange)
       }
+      this.checkerNFA(time, flag)
     },
     displayTable: function () {
       console.log('DISPLAYING TABLE')
+    },
+    checkerDFA: function (time, node) {
+      if (this.fsm.acceptStates.includes(node)) {
+        alert('accepted')
+        setTimeout(this.pulseUpEnd, time, 'green')
+        setTimeout(this.pulseDownEnd, time + 2000)
+      } else {
+        alert('not accepted')
+        setTimeout(this.pulseUpEnd, time, 'red')
+        setTimeout(this.pulseDownEnd, time + 2000)
+      }
+    },
+    checkerNFA: function (time, flag) {
+      if (flag) {
+        alert('accepted')
+        setTimeout(this.pulseUpEnd, time, 'lime')
+        setTimeout(this.pulseDownEnd, time + 2000)
+      } else {
+        alert('not accepted')
+        setTimeout(this.pulseUpEnd, time, 'red')
+        setTimeout(this.pulseDownEnd, time + 2000)
+      }
     }
   }
 }
