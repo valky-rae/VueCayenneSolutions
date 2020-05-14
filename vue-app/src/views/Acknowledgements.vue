@@ -2,26 +2,23 @@
   <transition name="component-fade" mce="out-in" appear>
     <div>
       <div class="typewriter">
-        <h1>About Us</h1>
+        <h1>Acknowledgements</h1>
       </div>
       <br />
-      <h2>Meet the Team</h2>
+      <br />
+      <div>These made the Cayenne Converter Possible: </div>
+      <br />
+      <br />
       <table style="width:100%">
         <tr>
           <td>
             <div class="flip-card">
               <div class="flip-card-inner">
-                <div class="flip-card-front">
-                  <img
-                    src="../assets/stewardess.png"
-                    alt="Avatar"
-                    style="width:300px;height:300px;"
-                  />
-                </div>
+                <div class="flip-card-front"></div>
                 <div class="flip-card-back">
-                  <h2>Samantha Blanc</h2>
-                  <p>Project Manager</p>
-                  <p>She mothers us.</p>
+                  <h2>D3 Graphviz</h2>
+                  <p>A javascript package that renders Dot diagrams.</p>
+                  <p>Used on the Converter and Canvas page to show you all those diagram.</p>
                 </div>
               </div>
             </div>
@@ -30,17 +27,11 @@
           <td>
             <div class="flip-card">
               <div class="flip-card-inner">
-                <div class="flip-card-front">
-                  <img
-                    src="../assets/businessman.png"
-                    alt="Avatar"
-                    style="width:300px;height:300px;"
-                  />
-                </div>
+                <div class="flip-card-front"></div>
                 <div class="flip-card-back">
-                  <h2>Kyle</h2>
-                  <p>Documentation Lead</p>
-                  <p>He keeps us laughing and motivated.</p>
+                  <h2>Automata.js</h2>
+                  <p>A javascript package that converts a regular expression into a Dot diagram.</p>
+                  <p>Used on the Converter page to change the regular expressions entered in DFAs and NFAs.</p>
                 </div>
               </div>
             </div>
@@ -49,21 +40,30 @@
           <td>
             <div class="flip-card">
               <div class="flip-card-inner">
-                <div class="flip-card-front">
-                  <img src="../assets/teacher.png" alt="Avatar" style="width:300px;height:300px;" />
-                </div>
+                <div class="flip-card-front"></div>
                 <div class="flip-card-back">
-                  <h2>Rae Anne</h2>
-                  <p>Lead Programmer</p>
-                  <p>She's always doing the most and the best.</p>
+                  <h2>Vue.js</h2>
+                  <p>A javascript framework</p>
+                  <p>Used everywhere.</p>
+                </div>
+              </div>
+            </div>
+          </td>
+
+          <td>
+            <div class="flip-card">
+              <div class="flip-card-inner">
+                <div class="flip-card-front"></div>
+                <div class="flip-card-back">
+                  <h2>Inzy</h2>
+                  <p>Not javascript but just as important to this project.</p>
+                  <p>The literal inspiration for this project.</p>
                 </div>
               </div>
             </div>
           </td>
         </tr>
-      </table>Icons made by
-      <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from
-      <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>
+      </table>
     </div>
   </transition>
 </template>
@@ -71,8 +71,8 @@
 <style scoped>
 .flip-card {
   background-color: transparent;
-  width: 300px;
-  height: 300px;
+  width: 250px;
+  height: 250px;
   perspective: 1000px;
 }
 
