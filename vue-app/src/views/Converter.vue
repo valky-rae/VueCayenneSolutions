@@ -12,10 +12,18 @@
               <button v-on:click="convertNFA()"> NFA </button>
             <input placeholder="Enter String" class="inputs" type="text" v-model="inputStr" v-on:keyup="split2(), clearPath()">
               <button class="buttonGradient" v-on:click="trace(), clearPath()"> TRACE </button>
-              <button class="buttonGradient" v-on:click="print(), clearPath()"> print </button>
+              <!-- <button class="buttonGradient" v-on:click="print(), clearPath()"> print </button> -->
           </div>
           <div id="graph" class="prettygraph" style="text-align: center;" v-on:click.capture="onNodeClick()"></div>
          </span>
+         <div class="form-popup" id="myForm" style="background-color:aliceblue" v-on:click.capture="stopJump()">
+          <form class="form-container" id="labelForm">
+            <label><b>New Label</b></label>
+            <input type="text" placeholder="Enter New Label" name="new_label" required>
+            <button v-on:click="newLabel()"> Change </button>
+            <button v-on:click="closeForm()">Close</button>
+          </form>
+        </div>
         </div>
     </div>
 </transition>
@@ -23,8 +31,6 @@
 <script>
 import * as d3Graphviz from 'd3-graphviz'
 import * as d3 from 'd3'
-import Carousel from '../views/Carousel'
-// import * as d3 from 'd3-graphviz'
 export default {
   data: function () {
     return {
@@ -114,8 +120,8 @@ export default {
       this.fsm = parser.parseToDFA()
       this.dotscript = this.fsm.toDotScript()
       this.myDotscript = this.defineMyDotscipt()
-      this.render(this.myDotscript)
-      // this.buildDigraphArray()
+      // this.render(this.myDotscript)
+      this.buildDigraphArray()
     },
     convertNFA: function () {
       let regParser = require('automata.js')
@@ -494,6 +500,7 @@ export default {
         setTimeout(this.pulseDownEnd, time + 2000)
       } else {
         alert('not accepted')
+        this.openForm()
         setTimeout(this.pulseUpEnd, time, 'red')
         setTimeout(this.pulseDownEnd, time + 2000)
       }
@@ -508,12 +515,29 @@ export default {
         setTimeout(this.pulseUpEnd, time, 'red')
         setTimeout(this.pulseDownEnd, time + 2000)
       }
+    },
+    openForm () {
+      var d = document.getElementById('myForm')
+      d.style.display = 'block'
+      d.className = 'animated pulse'
+    },
+    closeForm () {
+      document.getElementById('myForm').style.display = 'none'
     }
   }
 }
 </script>
 
 <style scoped>
+.form-popup {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  right: 15px;
+  border: 3px solid #f1f1f1;
+  z-index: 9;
+  background-color: aliceblue ;
+}
 button {
   margin: 15px;
 }
@@ -567,7 +591,7 @@ button {
 }
 .prettygraph{
     display: block;
-    height: 400px;
+    height: 350px;
     width: 100%;
     background-color: white ;
     border: 2px solid aliceblue;
