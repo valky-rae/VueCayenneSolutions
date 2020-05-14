@@ -1,6 +1,6 @@
 <template>
 <transition name="component-fade" mce="in-out" appear>
-    <div>
+    <div @click="closePaths">
         <div class="typewriter">
             <h1>Cayenne Converter </h1>
         </div>
@@ -534,7 +534,9 @@ export default {
       d.className = 'animated pulse'
     },
     closePaths () {
-      document.getElementById('myTable').style.display = 'none'
+      setTimeout(function () {
+        document.getElementById('myTable').style.display = 'none'
+      }, 5000)
     }
   }
 }
