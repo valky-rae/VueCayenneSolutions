@@ -29,7 +29,7 @@
     </Slide>
     <router-view />
     <div v-if="show1">
-      <h1>Welome</h1>
+      <h1>Welcome</h1>
       <br />
       <h2>How to Use</h2>
       <br />
