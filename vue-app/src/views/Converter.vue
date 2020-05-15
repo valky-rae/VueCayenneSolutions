@@ -151,8 +151,8 @@ export default {
       this.fsm = parser.parseToDFA()
       this.dotscript = this.fsm.toDotScript()
       this.myDotscript = this.defineMyDotscipt()
-      this.render(this.myDotscript)
-      // this.buildDigraphArray()
+      // this.render(this.myDotscript)
+      this.buildDigraphArray()
     },
     convertNFA: function () {
       let regParser = require('automata.js')
@@ -161,8 +161,8 @@ export default {
       this.dotscript = this.fsm.toDotScript()
       this.myDotscript = this.defineMyDotscipt()
       this.removal()
-      this.render(this.myDotscript)
-      // this.buildDigraphArray()
+      // this.render(this.myDotscript)
+      this.buildDigraphArray()
     },
     clearRemovals: function () {
       this.removals = []
@@ -364,7 +364,9 @@ export default {
           }
           if (d.tag === 'ellipse') {
             d3.select(this)
-            if (d.attributes.rx !== '22') {
+            if (removed.includes(d.parent.attributes.id)) {
+              d.attributes.stroke = 'white'
+            } else if (d.attributes.rx !== '22') {
               d.attributes.fill = 'white'
               d.attributes.rx = '18'
               d.attributes.ry = '18'
