@@ -520,8 +520,35 @@ export default {
       if (this.yesPaths.length !== 0) {
         this.renderNFATrace(this.yesPaths[0], true)
       } else {
-        this.renderNFATrace(this.allPaths[1], false)
+        this.findWorst()
+        // this.renderNFATrace(this.allPaths[1], false)
       }
+    },
+    findWorst: function () {
+      let filtered = []
+      // let filtered = this.allPaths.map(function (item) {
+      //   return item.indexOf(item.length - 1)
+      // })
+      for (let x = 0; x < this.allPaths.length; x++) {
+        let str = this.allPaths[x]
+        console.log('string is ' + str)
+        console.log('length is ' + str.length)
+        let letter = str[str.length - 1]
+        filtered.push(letter)
+      }
+      let worst = []
+      for (let x = 1; x < filtered.length; x++) {
+        if (!this.fsm.acceptStates.includes(filtered[x].toString())) {
+          worst.push(this.allPaths[x])
+        }
+      }
+      if (worst.length === 0) {
+        this.renderNFATrace(this.allPaths[1])
+      } else {
+        this.renderNFATrace(worst[0])
+      }
+      console.log('FLITERED >>>>>>>>>>' + filtered)
+      console.log('WOSRT >>>>>>>>>>' + worst)
     },
     renderNFATrace: function (mypath, flag) {
       let path = mypath.split('')
