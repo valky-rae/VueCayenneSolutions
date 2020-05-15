@@ -6,31 +6,39 @@
     </div>
     <span style="display:flex">
       <div class="icon-bar">
-        <button v-on:click="convert()">
-          <img src="../assets/start.png" alt="start" />
+        <button v-on:click="start()">
+          <div class="tooltip">
+            <img src="../assets/start.png" alt="start" />
+            <span class="tooltiptext">Let's get started</span>
+          </div>
         </button>
         <button v-on:click="addState()">
-          <img src="../assets/state.png" alt="add state" />
+          <div class="tooltip">
+            <img src="../assets/state.png" alt="add state" />
+            <span class="tooltiptext">Add state</span>
+          </div>
         </button>
         <button v-on:click="addAcceptState()">
-          <img src="../assets/accept_state.png" alt="add accept state" />
+          <div class="tooltip">
+            <img src="../assets/accept_state.png" alt="add accept state" />
+            <span class="tooltiptext">Add accept state</span>
+          </div>
         </button>
         <button v-on:click="addEdge()">
-          <img src="../assets/arrow.png" alt="add arrow" />
+          <div class="tooltip">
+            <img src="../assets/arrow.png" alt="add arrow" />
+            <span class="tooltiptext">Add arrow</span>
+          </div>
         </button>
         <button v-on:click="deleteG()">
-          <img src="../assets/delete.png" alt="delete" />
+          <div class="tooltip">
+            <img src="../assets/delete.png" alt="delete" />
+            <span class="tooltiptext">Delete</span>
+          </div>
         </button>
-        <button id="saveme" v-on:click="save()">
-          <img src="../assets/save.png" alt="save" />
-        </button>
-        <a href="#" class="button" id="btn-download" v-on:click.capture="save()">
-          <img src="../assets/save.png" alt="save" />
-        </a>
       </div>
       <div id="graph" class="prettygraph" style="text-align: center;" v-on:click.capture="onNodeClick()"></div>
-      <image id="theImage" />
-    </span>=
+    </span>
     <div class="animated infinite bounce" id="myForm" style="background-color:aliceblue" v-on:click.capture="stopJump()" v-if="show">
       <br>
       <form class="form-container" id="labelForm">
@@ -52,6 +60,8 @@ export default {
     return {
       editDot: ['digraph  {', ' node [shape=circle style="filled"]', ' a [fillcolor="white"]', ' b [fillcolor="white"]', ' ',
         'a -> b [label=a]', '}'],
+      firstDot: ['digraph  {', ' node [shape=circle style="filled"]', ' a [fillcolor="white"]', ' b [fillcolor="white"]', ' ',
+        'a -> b [label=a]', '}'],
       selectedNode: null,
       nodeName: 'b',
       accent: ' [color=navyblue fillcolor=aliceblue] ',
@@ -64,6 +74,14 @@ export default {
     }
   },
   methods: {
+    start () {
+      var ds = ''
+      var i
+      for (i = 0; i < this.firstDot.length; i++) {
+        ds = ds + this.firstDot[i]
+      }
+      d3Graphviz.graphviz('#graph').renderDot(ds)
+    },
     convert () {
       var ds = ''
       var i
@@ -289,13 +307,13 @@ export default {
       this.closeForm()
     },
     save () {
-      var canvas = document.getElementById('graph')
-      // var button = document.getElementById('saveme')
+      /* var canvas = document.getElementById('graph')
+      var button = document.getElementById('saveme')
       var button = document.getElementById('btn-download')
       var dataURL = canvas.toDataURL('image/png')
       document.getElementById('theImage').src = dataURL
       window.location.href = dataURL
-      button.href = dataURL
+      button.href = dataURL */
     }
   }
 }
@@ -342,5 +360,29 @@ export default {
     background-color: white ;
     border: 2px solid aliceblue;
     border-radius: 5px;
+}
+/* Tooltip container */
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+/* Tooltip text */
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  padding: 2px 0;
+  border-radius: 6px;
+  /* Position the tooltip text - see examples below! */
+  position: absolute;
+  z-index: 1;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+  visibility: visible;
 }
 </style>

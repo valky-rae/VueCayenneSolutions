@@ -6,7 +6,10 @@
       </div>
       <br />
       <br />
-      <div>These made the Cayenne Converter Possible: </div>
+      <div>By highlighting the following aspects which is made public by the cayenne solutions team
+         as it relates to the development of the application, it is noted that all tools and software
+          used by the project team were accessible to all users via the internet and as such,
+           no copyright infringement laws were violated</div>
       <br />
       <br />
       <table style="width:100%">
@@ -15,7 +18,7 @@
             <div class="flip-card">
               <div class="flip-card-inner">
                 <div class="flip-card-front">
-                  <img src="../assets/d3.jpeg" alt="d3Graphviz" style="width:250px;height:250px;" />
+                  <img src="../assets/d3.jpeg" alt="d3Graphviz" style="width:260px;height:260px;" />
                 </div>
                 <div class="flip-card-back">
                   <h2>D3 Graphviz</h2>
@@ -45,7 +48,7 @@
             <div class="flip-card">
               <div class="flip-card-inner">
                 <div class="flip-card-front">
-                  <img src="../assets/vue.png" alt="Vue" style="width:250px;height:250px;" />
+                  <img src="../assets/vue.png" alt="Vue" style="width:260px;height:260px;" />
                 </div>
                 <div class="flip-card-back">
                   <h2>Vue.js</h2>
@@ -60,12 +63,13 @@
             <div class="flip-card">
               <div class="flip-card-inner">
                 <div class="flip-card-front">
-                  <img src="../assets/lecturer.png" alt="d3Graphviz" style="width:250px;height:250px;" />
+                  <img src="../assets/lecturer.png" alt="d3Graphviz" style="width:260px;height:260px;" />
                 </div>
                 <div class="flip-card-back">
                   <h2>Inzy</h2>
-                  <p>Not javascript but just as important to this project.</p>
-                  <p>The literal inspiration for this project.</p>
+                  <p>Our project team would like to express our deepest gratitude to Mr. Inzamam Rahaman for his valuable and
+                    constructive suggestions towards the planning and development of the project website application.
+                    His willingness to give his time so generously has been very much appreciated.</p>
                 </div>
               </div>
             </div>
@@ -79,8 +83,8 @@
 <style scoped>
 .flip-card {
   background-color: transparent;
-  width: 250px;
-  height: 250px;
+  width: 260px;
+  height: 260px;
   perspective: 1000px;
 }
 
@@ -109,7 +113,7 @@
 }
 
 .flip-card-front {
-  background-color: #add8e6;
+  background-color: aliceblue;
   color: black;
 }
 
