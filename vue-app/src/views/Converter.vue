@@ -324,7 +324,6 @@ export default {
     },
     pulseUpEnd: function (key) {
       let removed = this.removals
-      console.log('RED PULSE UP')
       let t = d3.transition()
         .duration(500)
         .ease(d3.easeLinear)
@@ -332,22 +331,14 @@ export default {
         .transition(t)
         .attributer(function (d) {
           if (d.tag === 'ellipse') {
-            if (removed.includes(d.parent.attributes.id)) {
-              d3.select(this)
-              d.attributes.stroke = 'white'
-            }
-          }
-          if (d.tag === 'text') {
-            if (removed.includes(d.parent.attributes.id)) {
-              d3.select(this)
-              d.attributes.fill = 'white'
-            }
-          }
-          if (d.tag === 'ellipse') {
             d3.select(this)
-            d.attributes.fill = key
-            d.attributes.rx = 23
-            d.attributes.ry = 23
+            if (removed.includes(d.parent.attributes.id)) {
+              d.attributes.stroke = 'white'
+            } else {
+              d.attributes.fill = key
+              d.attributes.rx = 23
+              d.attributes.ry = 23
+            }
           }
           if (d.tag === 'text') {
             d3.select(this)
@@ -365,12 +356,6 @@ export default {
       d3Graphviz.graphviz('#graph')
         .transition(t)
         .attributer(function (d) {
-          if (d.tag === 'ellipse') {
-            if (removed.includes(d.parent.attributes.id)) {
-              d3.select(this)
-              d.attributes.stroke = 'white'
-            }
-          }
           if (d.tag === 'text') {
             if (removed.includes(d.parent.attributes.id)) {
               d3.select(this)
@@ -380,7 +365,7 @@ export default {
           if (d.tag === 'ellipse') {
             d3.select(this)
             if (d.attributes.rx !== '22') {
-              d.attributes.fill = 'whitesmoke'
+              d.attributes.fill = 'white'
               d.attributes.rx = '18'
               d.attributes.ry = '18'
             }
