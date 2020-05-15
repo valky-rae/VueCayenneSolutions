@@ -1,6 +1,6 @@
 <template>
 <transition name="component-fade" mce="in-out" appear>
-    <div @click="closePaths">
+    <div >
         <div class="typewriter">
             <h1>Cayenne Converter </h1>
         </div>
@@ -8,11 +8,11 @@
         <span style="display:flex">
           <div class="icon-bar">
             <input placeholder="Enter REGEX" class="inputs" type="text" v-model="regex" v-on:keyup="clearPath()">
-              <button v-on:click="convertDFA()"> DFA </button>
+              <button v-on:click="clearRemovals(), convertDFA()"> DFA </button>
               <button v-on:click="convertNFA()"> NFA </button>
             <input placeholder="Enter String" class="inputs" type="text" v-model="inputStr" v-on:keyup="split2(), clearPath()">
-              <button class="buttonGradient" v-on:click="trace(), clearPath()"> TRACE </button>
-              <button class="buttonGradient" v-on:click="openPaths()" style="font-size: 12px"> Show All Paths </button>
+              <button class="buttonGradient" v-on:click="clearPath(), trace()"> TRACE </button>
+              <button class="buttonGradient" @click="show=!show" style="font-size: 12px"> Show All Paths </button>
           </div>
           <div id="graph" class="prettygraph" style="text-align: center;" v-on:click.capture="onNodeClick()"></div>
          </span>
@@ -21,7 +21,7 @@
             <label><b> {{comment}} </b></label>
           </form>
         </div>
-        <div>
+        <div v-if="show">
           <table id='myTable'>
               <thead class='tHeader'>
                 <tr>
@@ -51,16 +51,18 @@ export default {
   },
   data: function () {
     return {
-      regex: '101',
-      fsm: 'empty fsm',
-      dotscript: 'empty ds',
-      myDotscript: 'I am EMPTY',
+      regex: 'ab(cd)*',
+      fsm: '',
+      dotscript: '',
+      myDotscript: '',
       inputStr: '',
       splitStr: [ ],
       digraphArray: [],
-      allPaths: ['0', '12345678', '23432', '023'],
+      allPaths: ['123', '123456'],
       yesPaths: [],
-      comment: 'Congratulations!'
+      comment: 'Congratulations!',
+      removals: [],
+      show: false
     }
   },
   methods: {
@@ -102,18 +104,44 @@ export default {
       console.log(this.splitStr)
     },
     render: function (dotscript) {
+      let removed = this.removals
       d3Graphviz.graphviz('#graph')
         .attributer(function (d) {
+          if (d.tag === 'ellipse') {
+            if (removed.includes(d.parent.attributes.id)) {
+              d3.select(this)
+              d.attributes.stroke = 'white'
+            }
+          }
+          if (d.tag === 'text') {
+            if (removed.includes(d.parent.attributes.id)) {
+              d3.select(this)
+              d.attributes.fill = 'white'
+            }
+          }
         })
         .renderDot(dotscript)
     },
     renderT: function (dotscript) {
+      let removed = this.removals
       let t = d3.transition()
         .duration(500)
         .ease(d3.easeLinear)
       d3Graphviz.graphviz('#graph')
         .transition(t)
         .attributer(function (d) {
+          if (d.tag === 'ellipse') {
+            if (removed.includes(d.parent.attributes.id)) {
+              d3.select(this)
+              d.attributes.stroke = 'white'
+            }
+          }
+          if (d.tag === 'text') {
+            if (removed.includes(d.parent.attributes.id)) {
+              d3.select(this)
+              d.attributes.fill = 'white'
+            }
+          }
         })
         .renderDot(dotscript)
     },
@@ -123,8 +151,8 @@ export default {
       this.fsm = parser.parseToDFA()
       this.dotscript = this.fsm.toDotScript()
       this.myDotscript = this.defineMyDotscipt()
-      // this.render(this.myDotscript)
-      this.buildDigraphArray()
+      this.render(this.myDotscript)
+      // this.buildDigraphArray()
     },
     convertNFA: function () {
       let regParser = require('automata.js')
@@ -132,9 +160,12 @@ export default {
       this.fsm = parser.parseToNFA()
       this.dotscript = this.fsm.toDotScript()
       this.myDotscript = this.defineMyDotscipt()
-      // this.removal()
+      this.removal()
       this.render(this.myDotscript)
       // this.buildDigraphArray()
+    },
+    clearRemovals: function () {
+      this.removals = []
     },
     removal: function () {
       let remove = []
@@ -152,25 +183,11 @@ export default {
         }
       }
       for (let x = 0; x < remove.length; x++) {
-        if (remove[x].flag === true) {
-          remove.splice(x, 1)
+        if (remove[x].flag === false) {
+          let num = parseInt(remove[x].node) + 1
+          this.removals.push('node' + num)
         }
       }
-      console.log('REMOVE TGHESE')
-      console.log(remove)
-      let arrayDiagraph = this.myDotscript.split(/\r?\n/)
-      for (let x = 0; x < remove.length; x++) {
-        let str1 = 'node '
-        let str2 = remove[x].node.toString() + ';'
-        for (let y = 0; y < arrayDiagraph.length; y++) {
-          if (arrayDiagraph[y].includes(str1) && arrayDiagraph[y].includes(str2)) {
-            console.log('removing this line')
-            console.log(arrayDiagraph[y])
-            arrayDiagraph.splice(y, 1)
-          }
-        }
-      }
-      this.myDotscript = arrayDiagraph.join('\n')
     },
     buildDigraphArray: function () {
       let digraphArray = []
@@ -231,6 +248,7 @@ export default {
       return this.myDotscript
     },
     pulseUp: function (key, dotscript) {
+      let removed = this.removals
       console.log('in pulse up key is' + key)
       let t = d3.transition()
         .duration(500)
@@ -238,6 +256,18 @@ export default {
       d3.select('#graph').graphviz()
         .transition(t)
         .attributer(function (d) {
+          if (d.tag === 'ellipse') {
+            if (removed.includes(d.parent.attributes.id)) {
+              d3.select(this)
+              d.attributes.stroke = 'white'
+            }
+          }
+          if (d.tag === 'text') {
+            if (removed.includes(d.parent.attributes.id)) {
+              d3.select(this)
+              d.attributes.fill = 'white'
+            }
+          }
           if (d.tag === 'ellipse') {
             d3.select(this)
             if (d.parent.attributes.id === key) {
@@ -261,6 +291,7 @@ export default {
         .renderDot(dotscript)
     },
     pulseDown: function (key, dotscript) {
+      let removed = this.removals
       console.log('in pulse down')
       let t = d3.transition()
         .duration(500)
@@ -268,6 +299,18 @@ export default {
       d3Graphviz.graphviz('#graph')
         .transition(t)
         .attributer(function (d) {
+          if (d.tag === 'ellipse') {
+            if (removed.includes(d.parent.attributes.id)) {
+              d3.select(this)
+              d.attributes.stroke = 'white'
+            }
+          }
+          if (d.tag === 'text') {
+            if (removed.includes(d.parent.attributes.id)) {
+              d3.select(this)
+              d.attributes.fill = 'white'
+            }
+          }
           if (d.tag === 'ellipse') {
             d3.select(this)
             if (d.attributes.rx !== '22') {
@@ -280,6 +323,7 @@ export default {
         .renderDot(dotscript)
     },
     pulseUpEnd: function (key) {
+      let removed = this.removals
       console.log('RED PULSE UP')
       let t = d3.transition()
         .duration(500)
@@ -287,6 +331,18 @@ export default {
       d3.select('#graph').graphviz()
         .transition(t)
         .attributer(function (d) {
+          if (d.tag === 'ellipse') {
+            if (removed.includes(d.parent.attributes.id)) {
+              d3.select(this)
+              d.attributes.stroke = 'white'
+            }
+          }
+          if (d.tag === 'text') {
+            if (removed.includes(d.parent.attributes.id)) {
+              d3.select(this)
+              d.attributes.fill = 'white'
+            }
+          }
           if (d.tag === 'ellipse') {
             d3.select(this)
             d.attributes.fill = key
@@ -301,6 +357,7 @@ export default {
         .renderDot(this.myDotscript)
     },
     pulseDownEnd: function () {
+      let removed = this.removals
       console.log('RED PULSE DOWN')
       let t = d3.transition()
         .duration(500)
@@ -308,6 +365,18 @@ export default {
       d3Graphviz.graphviz('#graph')
         .transition(t)
         .attributer(function (d) {
+          if (d.tag === 'ellipse') {
+            if (removed.includes(d.parent.attributes.id)) {
+              d3.select(this)
+              d.attributes.stroke = 'white'
+            }
+          }
+          if (d.tag === 'text') {
+            if (removed.includes(d.parent.attributes.id)) {
+              d3.select(this)
+              d.attributes.fill = 'white'
+            }
+          }
           if (d.tag === 'ellipse') {
             d3.select(this)
             if (d.attributes.rx !== '22') {
@@ -362,6 +431,7 @@ export default {
           }
         }
         if (nextNode === null && x < this.splitStr.length) {
+          this.checkerNFA(time, false)
           this.failTrace()
           return
         }
@@ -383,7 +453,13 @@ export default {
         setTimeout(this.render, time, renderChange)
         setTimeout(this.pulseDown, time, key, renderChange)
       }
-      this.checkerDFA(time, currNode)
+      console.log(this.fsm.acceptStates)
+      console.log('currnode' + currNode)
+      if (this.fsm.acceptStates.includes(currNode.toString())) {
+        this.checkerNFA(time, true)
+      } else {
+        this.checkerNFA(time, false)
+      }
     },
     highlightArrow: function (array, str1, str2) {
       let x = 0
@@ -549,7 +625,7 @@ export default {
     width: 825px;
     text-align: center;
     margin-left: 17%;
-    display: none;
+    /* display: none; */
     border: 3px solid #f1f1f1;
     z-index: 9;
 }
