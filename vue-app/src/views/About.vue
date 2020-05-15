@@ -20,7 +20,7 @@
                 </div>
                 <div class="flip-card-back">
                   <h2>Samantha Blanc</h2>
-                  <p>Project Manager</p>
+                  <p>Project Lead</p>
                   <p>She mothers us.</p>
                 </div>
               </div>
@@ -39,7 +39,7 @@
                 </div>
                 <div class="flip-card-back">
                   <h2>Kyle</h2>
-                  <p>Documentation Lead</p>
+                  <p>Documenter Lead</p>
                   <p>He keeps us laughing and motivated.</p>
                 </div>
               </div>
@@ -54,7 +54,7 @@
                 </div>
                 <div class="flip-card-back">
                   <h2>Rae Anne</h2>
-                  <p>Lead Programmer</p>
+                  <p>Development Lead</p>
                   <p>She's always doing the most and the best.</p>
                 </div>
               </div>

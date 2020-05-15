@@ -14,7 +14,9 @@
           <td>
             <div class="flip-card">
               <div class="flip-card-inner">
-                <div class="flip-card-front"></div>
+                <div class="flip-card-front">
+                  <img src="../assets/d3.jpeg" alt="d3Graphviz" style="width:250px;height:250px;" />
+                </div>
                 <div class="flip-card-back">
                   <h2>D3 Graphviz</h2>
                   <p>A javascript package that renders Dot diagrams.</p>
@@ -27,7 +29,9 @@
           <td>
             <div class="flip-card">
               <div class="flip-card-inner">
-                <div class="flip-card-front"></div>
+                <div class="flip-card-front">
+                  <img src="../assets/automata.png" alt="automata.js" style="width:200px;height:200px;" />
+                </div>
                 <div class="flip-card-back">
                   <h2>Automata.js</h2>
                   <p>A javascript package that converts a regular expression into a Dot diagram.</p>
@@ -40,7 +44,9 @@
           <td>
             <div class="flip-card">
               <div class="flip-card-inner">
-                <div class="flip-card-front"></div>
+                <div class="flip-card-front">
+                  <img src="../assets/vue.png" alt="Vue" style="width:250px;height:250px;" />
+                </div>
                 <div class="flip-card-back">
                   <h2>Vue.js</h2>
                   <p>A javascript framework</p>
@@ -53,7 +59,9 @@
           <td>
             <div class="flip-card">
               <div class="flip-card-inner">
-                <div class="flip-card-front"></div>
+                <div class="flip-card-front">
+                  <img src="../assets/lecturer.png" alt="d3Graphviz" style="width:250px;height:250px;" />
+                </div>
                 <div class="flip-card-back">
                   <h2>Inzy</h2>
                   <p>Not javascript but just as important to this project.</p>
@@ -92,6 +100,7 @@
 
 .flip-card-front,
 .flip-card-back {
+  text-align: center;
   position: absolute;
   width: 100%;
   height: 100%;

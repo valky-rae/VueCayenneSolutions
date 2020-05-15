@@ -24,11 +24,14 @@
         <button id="saveme" v-on:click="save()">
           <img src="../assets/save.png" alt="save" />
         </button>
+        <a href="#" class="button" id="btn-download" v-on:click.capture="save()">
+          <img src="../assets/save.png" alt="save" />
+        </a>
       </div>
       <div id="graph" class="prettygraph" style="text-align: center;" v-on:click.capture="onNodeClick()"></div>
       <image id="theImage" />
-    </span>
-    <div class="form-popup" id="myForm" style="background-color:aliceblue" v-on:click.capture="stopJump()">
+    </span>=
+    <div class="animated infinite bounce" id="myForm" style="background-color:aliceblue" v-on:click.capture="stopJump()" v-if="show">
       <br>
       <form class="form-container" id="labelForm">
         <label><b>New Label</b></label>
@@ -56,7 +59,8 @@ export default {
       node2: null,
       addingEdge: false,
       accentDot: ['', ''],
-      selectedEdge: null
+      selectedEdge: null,
+      show: false
     }
   },
   methods: {
@@ -226,12 +230,10 @@ export default {
     },
     deleteG () {
       if (this.selectedNode != null) {
-        console.log('o')
         this.deleteNode()
       } else if (this.selectedEdge != null) {
         this.deleteEdge()
       }
-      console.log(this.editDot)
     },
     deleteEdge () {
       for (var i = 0; i < this.editDot.length; i++) {
@@ -250,11 +252,8 @@ export default {
         if (this.editDot[i] === ' ') {
           i = i + 1
           for (i; i < this.editDot.length; i++) {
-            console.log('jj')
             var editable = this.editDot[i].split(' ')
-            console.log(editable)
             for (var x = 0; x < editable.length; x++) {
-              console.log(x)
               if (editable[x] === nodeName) {
                 this.editDot.splice(i, 1)
               }
@@ -269,12 +268,13 @@ export default {
       d.className = ''
     },
     openForm () {
+      this.show = true
       var d = document.getElementById('myForm')
-      d.style.display = 'block'
       d.className = 'animated infinite bounce'
+      this.show = true
     },
     closeForm () {
-      document.getElementById('myForm').style.display = 'none'
+      this.show = false
     },
     newLabel () {
       var newL = document.getElementById('labelForm').new_label.value
@@ -290,7 +290,8 @@ export default {
     },
     save () {
       var canvas = document.getElementById('graph')
-      var button = document.getElementById('saveme')
+      // var button = document.getElementById('saveme')
+      var button = document.getElementById('btn-download')
       var dataURL = canvas.toDataURL('image/png')
       document.getElementById('theImage').src = dataURL
       window.location.href = dataURL
@@ -302,7 +303,7 @@ export default {
 <style scoped>
 /* The popup form - hidden by default */
 .form-popup {
-  display: none;
+  display: block;
   position: fixed;
   bottom: 0;
   right: 15px;

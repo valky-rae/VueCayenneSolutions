@@ -7,9 +7,8 @@
     </transition>
     <Login></Login>
     <Slide noOverlay class="nav">
-      <span @click="show1 = true">
-        <font-awesome-icon class="icons" icon="circle-notch" />
-        <router-link class="nav" to="/app">Home</router-link>
+      <span @click="show1 = true" style="text-align:center">
+        <router-link class="nav" to="/app"><img src="./assets/logo.png" alt="logo" style="width:70px;height:70px;"/></router-link>
       </span>
       <span @click="show1 = false">
         <font-awesome-icon class="icons" icon="circle-notch" />
@@ -28,7 +27,6 @@
         <router-link class="nav" to="/Ack">Acknowledgements</router-link>
       </span>
     </Slide>
-    <!-- <img src="./assets/logo.png"> -->
     <router-view />
     <div v-if="show1">
       <h1>Welome</h1>
