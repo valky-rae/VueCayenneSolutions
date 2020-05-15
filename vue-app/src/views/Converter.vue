@@ -42,13 +42,9 @@
 </transition>
 </template>
 <script>
-import MyTable from '../views/Table'
 import * as d3Graphviz from 'd3-graphviz'
 import * as d3 from 'd3'
 export default {
-  components: {
-    MyTable
-  },
   data: function () {
     return {
       regex: 'ab(cd)*',
