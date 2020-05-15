@@ -71,17 +71,6 @@ export default {
       }
       this.allPaths.push('0')
     },
-    print: function () {
-      console.log(this.fsm)
-      console.log(this.myDotscript)
-      this.allPaths.forEach(function (item) {
-        console.log(item)
-      })
-      console.log('YES PATHS')
-      this.yesPaths.forEach(function (item) {
-        console.log(item)
-      })
-    },
     split2: function () {
       let timeout = setTimeout(() => {
         while (this.splitStr.length > 0) {
@@ -96,8 +85,6 @@ export default {
         }
       }, 1000)
       console.log(timeout)
-      console.log(this.inputStr)
-      console.log(this.splitStr)
     },
     render: function (dotscript) {
       let removed = this.removals
@@ -245,7 +232,6 @@ export default {
     },
     pulseUp: function (key, dotscript) {
       let removed = this.removals
-      console.log('in pulse up key is' + key)
       let t = d3.transition()
         .duration(500)
         .ease(d3.easeLinear)
@@ -267,7 +253,6 @@ export default {
           if (d.tag === 'ellipse') {
             d3.select(this)
             if (d.parent.attributes.id === key) {
-              console.log('FOUND KEY NODE')
               d.attributes.fill = 'dodgerblue'
               d.attributes.rx = 23
               d.attributes.ry = 23
@@ -288,7 +273,6 @@ export default {
     },
     pulseDown: function (key, dotscript) {
       let removed = this.removals
-      console.log('in pulse down')
       let t = d3.transition()
         .duration(500)
         .ease(d3.easeLinear)
@@ -345,7 +329,6 @@ export default {
     },
     pulseDownEnd: function () {
       let removed = this.removals
-      console.log('RED PULSE DOWN')
       let t = d3.transition()
         .duration(500)
         .ease(d3.easeLinear)
@@ -374,14 +357,7 @@ export default {
     getKey: function (currNode) {
       let num = parseInt(currNode) + 1
       let key = 'node' + num.toString()
-      console.log('CURRNODE KEY>> ' + currNode + ' is ' + key)
       return key
-    },
-    activateInputStr: function (x) {
-      // this.splitStr.forEach(function (item) {
-      //   item.isactive = false
-      // })
-      this.splitStr[x].isactive = true
     },
     DFATrace4: function () {
       let arrayDiagraph = this.myDotscript.split(/\r?\n/)
@@ -403,7 +379,6 @@ export default {
       for (let x = 0; x < this.splitStr.length; x++) {
         let str1 = 'label=' + '"' + this.splitStr[x].char + '"'
         let str2 = currNode + '->'
-        console.log('CHECKING' + str1 + str2)
         // for each element of the diagraph DO CHECK
         for (let z = 0; z < this.fsm.numOfStates; z++) {
           if (this.fsm.transitions[currNode][z] === this.splitStr[x].char) {
@@ -436,8 +411,6 @@ export default {
         setTimeout(this.render, time, renderChange)
         setTimeout(this.pulseDown, time, key, renderChange)
       }
-      console.log(this.fsm.acceptStates)
-      console.log('currnode' + currNode)
       if (this.fsm.acceptStates.includes(currNode.toString())) {
         this.checkerNFA(time, true)
       } else {
@@ -465,7 +438,6 @@ export default {
       return array
     },
     findPaths: function (currNode, location, path) {
-      console.log('FIND PATHS FUNCTION')
       if (this.inputStr.length === location || this.fsm.transitions[currNode] === undefined) {
         this.allPaths.push(path)
         let end = path.split('').reverse()[0]
@@ -497,7 +469,6 @@ export default {
       }
     },
     NFATrace: function () {
-      console.log('NFA TRACING')
       this.findPaths(0, 0, 0)
       setTimeout(this.print(), 5000)
       if (this.yesPaths.length !== 0) {
@@ -509,13 +480,8 @@ export default {
     },
     findWorst: function () {
       let filtered = []
-      // let filtered = this.allPaths.map(function (item) {
-      //   return item.indexOf(item.length - 1)
-      // })
       for (let x = 0; x < this.allPaths.length; x++) {
         let str = this.allPaths[x]
-        console.log('string is ' + str)
-        console.log('length is ' + str.length)
         let letter = str[str.length - 1]
         filtered.push(letter)
       }
@@ -530,8 +496,6 @@ export default {
       } else {
         this.renderNFATrace(worst[0])
       }
-      console.log('FLITERED >>>>>>>>>>' + filtered)
-      console.log('WOSRT >>>>>>>>>>' + worst)
     },
     renderNFATrace: function (mypath, flag) {
       let path = mypath.split('')
@@ -572,9 +536,6 @@ export default {
         setTimeout(this.pulseDown, time, key, renderChange)
       }
       this.checkerNFA(time, flag)
-    },
-    displayTable: function () {
-      console.log('DISPLAYING TABLE')
     },
     checkerDFA: function (time, node) {
       if (this.fsm.acceptStates.includes(node)) {
