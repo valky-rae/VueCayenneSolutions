@@ -470,7 +470,7 @@ export default {
     },
     NFATrace: function () {
       this.findPaths(0, 0, 0)
-      setTimeout(this.print(), 5000)
+      // setTimeout(this.print(), 5000)
       if (this.yesPaths.length !== 0) {
         this.renderNFATrace(this.yesPaths[0], true)
       } else {
